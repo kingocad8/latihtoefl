@@ -460,6 +460,9 @@
       .lp-btn:active{transform:scale(.97)}
       .lp-btn.ghosty{background:transparent;color:#fff;box-shadow:none}
       .lp-btn.ghosty:hover{border-color:#FFE45C;color:#FFE45C}
+      .landing .masthead .stat{background:#E0F2FE;box-shadow:none;border:1px solid rgba(255,255,255,.5)}
+      .lp-btn.primary{background:#0EA5E9;color:#fff;border-color:#0EA5E9;width:100%;justify-content:center;box-shadow:0 8px 18px rgba(0,145,234,.22);padding:14px 26px}
+      .lp-hero-cta{margin-top:32px}
       .lp-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
       .lp-step{background:var(--surface2);border:1.5px solid var(--line);border-radius:20px;padding:18px}
       .lp-step .n{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center;font-family:"Outfit",sans-serif;font-weight:800;margin-bottom:8px}
@@ -476,16 +479,16 @@
         <button class="gate-back" id="btnGateBack" type="button">← Kembali ke halaman utama</button>
         <p class="g-kicker"><i></i> Akses LatihTOEFL · Sekali bayar, lifetime</p>
         <h2 id="gateTitle">Latih<span class="hl">TOEFL</span></h2>
-        <p class="g-sub">Masuk dengan akun Google, lalu aktifkan kodemu sekali saja. Setelah itu progres latihanmu tersimpan di akunmu dan nyambung di HP maupun laptop.</p>
+        <p class="g-sub">Masuk dengan Google, lalu aktifkan kodemu sekali. Progresmu tersimpan dan nyambung di semua perangkat.</p>
 
         <div class="g-status" id="gateStatus" role="status"></div>
 
         <div class="gate-step" id="gateStepLogin">
           <div class="g-stephead"><span class="g-num">1</span> Masuk dengan Google</div>
-          <p id="gateLoginText">Satu akun Google untuk semua perangkatmu. Sesi login tersimpan di perangkat ini, jadi kamu tidak perlu masuk ulang setiap membuka halaman.</p>
-          <div class="g-userline" id="gateUserLine" hidden>
-            <span class="g-avatar" id="gateAvatar">?</span>
-            <span><b id="gateUserName">—</b><br /><span class="src" id="gateUserMail">—</span></span>
+          <p id="gateLoginText">Satu akun untuk semua perangkat.</p>
+          <div class="g-userline" id="gateUserLine">
+            <span class="g-avatar" id="gateAvatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg></span>
+            <span><b id="gateUserName">Belum masuk</b><br /><span class="src" id="gateUserMail"></span></span>
           </div>
           <button class="g-btn google" id="btnGoogleLogin" type="button">
             <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3l5.7-5.7C34.3 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3l5.7-5.7C34.3 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
@@ -496,7 +499,7 @@
 
         <div class="gate-step" id="gateStepRedeem">
           <div class="g-stephead"><span class="g-num">2</span> Masukkan kode redeem</div>
-          <p>Kode kamu terima setelah pembelian. Kode dimasukkan <b>sekali</b> saat aktivasi pertama dan terikat permanen ke akun Google di langkah 1 — satu kode hanya untuk satu akun.</p>
+          <p>Kode dipakai sekali dan terikat ke akunmu.</p>
           <label for="redeemInput" style="font-weight:700;font-size:.9rem">Kode redeem</label>
           <input class="g-input" id="redeemInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CONTOH: LTFL-XXXX-XXXX" disabled />
           <button class="g-btn" id="btnRedeem" type="button" disabled>Aktifkan kode saya</button>
@@ -505,14 +508,6 @@
         <button class="g-btn" id="btnEnterApp" type="button" hidden>Mulai latihan →</button>
         <p class="src" style="margin-top:12px">Dengan masuk, progres latihan, skor, streak, dan flashcard kamu disimpan per akun (satu dokumen per pengguna di Firestore) supaya bisa dilanjutkan di perangkat lain.</p>
 
-        <details>
-          <summary>Untuk pemilik: buat kode redeem baru</summary>
-          <ol>
-            <li>Halaman ini sudah terhubung ke proyek Firebase <b>latihtoefl</b>: login Google aktif, dan aktivasi berjalan lewat transaksi Firestore (kode yang sudah terikat UID lain otomatis ditolak).</li>
-            <li><b>Membuat kode jualan:</b> di Firestore → koleksi <span class="kbd">redeemCodes</span> → Add document → Document ID = kode yang akan dijual (mis. <span class="kbd">LTFL-7K2P-9QXM</span>), tambah field <span class="kbd">usedBy</span> dengan nilai kosong. Satu dokumen per pembeli. Kode tidak disimpan di file web dan tidak di env Vercel — cukup sebagai dokumen Firestore ini.</li>
-            <li>Firestore Rules yang berlaku: <span class="kbd">users/{uid}</span> hanya bisa dibaca/ditulis pemiliknya; <span class="kbd">redeemCodes/{code}</span> bisa dibaca akun yang login, dan klaim hanya boleh saat <span class="kbd">usedBy</span> masih kosong dan diisi UID akun yang sedang login.</li>
-          </ol>
-        </details>
       </div>
     </div>
 
@@ -553,7 +548,7 @@
             <span class="stat"><b>AI</b> penilaian Writing &amp; Tanya AI</span>
           </div>
           <div class="lp-hero-cta">
-            <button class="lp-btn js-open-gate" type="button">Masuk — login &amp; kode redeem</button>
+            <button class="lp-btn primary js-open-gate" type="button">Masuk — login &amp; kode redeem</button>
             <a class="lp-btn ghosty" href="#lp-fitur">Lihat fitur dulu</a>
           </div>
         </div>
@@ -5655,7 +5650,10 @@
         currentUser = null; activated = false;
         elStepLogin.classList.remove("done");
         elStepRedeem.classList.remove("done");
-        document.getElementById("gateUserLine").hidden = true;
+        document.getElementById("gateUserLine").hidden = false;
+        document.getElementById("gateUserName").textContent = "Belum masuk";
+        document.getElementById("gateUserMail").textContent = "";
+        document.getElementById("gateAvatar").innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>';
         btnLogin.hidden = false;
         btnGateLogout.hidden = true;
         inpCode.disabled = true;
