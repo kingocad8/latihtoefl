@@ -525,7 +525,7 @@
 
         <div class="gate-step" id="gateStepRedeem">
           <div class="g-stephead"><span class="g-num">2</span> Masukkan kode redeem</div>
-          <p>Kode dipakai sekali dan terikat ke akunmu.</p>
+          <p>Kode dipakai sekali dan terikat ke akunmu. Sudah pernah mengaktifkan kodemu di perangkat lain? Masuk dengan akun Google yang sama — akunmu langsung terbuka, dan memasukkan kode yang sama di sini juga aman.</p>
           <label for="redeemInput" style="font-weight:700;font-size:.9rem">Kode redeem</label>
           <input class="g-input" id="redeemInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CONTOH: LTFL-XXXX-XXXX" disabled />
           <button class="g-btn" id="btnRedeem" type="button" disabled>Aktifkan kode saya</button>
@@ -5556,32 +5556,85 @@
         if (!code) { gateMsg("err", "Isi dulu kode redeem-nya."); return; }
         if (!currentUser) { gateMsg("err", "Login Google dulu di langkah 1."); return; }
         btnRedeem.disabled = true; btnRedeem.textContent = "Memeriksa kode…";
+        var uid = currentUser.uid;
+        var userRef = DB.collection("users").doc(uid);
         var codeRef = DB.collection("redeemCodes").doc(code);
-        DB.runTransaction(function (tx) {
-          return tx.get(codeRef).then(function (snap) {
-            if (!snap.exists) throw new Error("not-found");
-            var d = snap.data();
-            var usedBy = d.usedBy || "";
-            if (usedBy && usedBy !== currentUser.uid) throw new Error("used");
-            if (!usedBy) {
-              tx.update(codeRef, { usedBy: currentUser.uid });
-            }
-          });
-        }).then(function () {
-          return DB.collection("users").doc(currentUser.uid).set({
+        var MSG_NOT_FOUND = "Kode tidak ditemukan. Cek lagi ejaannya — kode persis seperti yang kamu terima setelah pembelian.";
+        var MSG_USED_OTHER = "Kode ini sudah terikat ke akun Google lain. Satu kode hanya bisa dipakai satu akun — kalau ini kodemu, login pakai akun Google yang pertama kali mengaktifkannya.";
+        var MSG_DENIED = "Kode ini sudah pernah diaktifkan, jadi tidak bisa diklaim lagi dari akun ini. Kalau kode ini milikmu, masuk dengan akun Google yang pertama kali mengaktifkannya — di akun itu kamu langsung bisa latihan tanpa memasukkan kode lagi.";
+        function fail(msg) {
+          btnRedeem.disabled = false; btnRedeem.textContent = "Aktifkan kode saya";
+          gateMsg("err", msg);
+        }
+        function handleErr(err) {
+          if (err && err.message === "not-found") fail(MSG_NOT_FOUND);
+          else if (err && err.message === "used") fail(MSG_USED_OTHER);
+          else if (err && err.code === "permission-denied") fail(MSG_DENIED);
+          else if (err && err.code === "not-found") fail(MSG_NOT_FOUND);
+          else fail("Aktivasi gagal (" + (err && err.code ? err.code : "jaringan") + "). Coba lagi sebentar lagi.");
+        }
+        /* Kepemilikan kode sudah terbukti (kode memang terikat ke UID ini,
+           atau klaim baru barusan berhasil). Simpan status aktivasi ke
+           dokumen user — tapi kalau tulisan ini ditolak server, sesi ini
+           TETAP diaktifkan: jangan biarkan satu tulisan profil yang gagal
+           menggagalkan seluruh aktivasi (itulah yang dulu tampil sebagai
+           "Aktivasi gagal (permission-denied)" di perangkat kedua). */
+        function finishOk(alreadyMine) {
+          return userRef.set({
             email: currentUser.email || "", displayName: currentUser.displayName || "",
             redeemCode: code, activatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-        }).then(function () {
-          btnRedeem.textContent = "Aktifkan kode saya";
-          markActivated(code);
-          saveProgress();
-        }).catch(function (err) {
-          btnRedeem.disabled = false; btnRedeem.textContent = "Aktifkan kode saya";
-          if (err && err.message === "not-found") gateMsg("err", "Kode tidak ditemukan. Cek lagi ejaannya — kode persis seperti yang kamu terima setelah pembelian.");
-          else if (err && err.message === "used") gateMsg("err", "Kode ini sudah terikat ke akun Google lain. Satu kode hanya bisa dipakai satu akun — kalau ini kodemu, login pakai akun Google yang pertama kali mengaktifkannya.");
-          else gateMsg("err", "Aktivasi gagal (" + (err && err.code ? err.code : "jaringan") + "). Coba lagi sebentar lagi.");
-        });
+          }, { merge: true }).then(function () {
+            btnRedeem.textContent = "Aktifkan kode saya";
+            markActivated(code);
+            if (alreadyMine) gateMsg("ok", "Kode ini memang sudah terikat ke akun Google ini ✓ Kamu tidak perlu kode baru — klik \u201CMulai latihan\u201D untuk masuk. Satu akun berlaku di semua perangkatmu.");
+            saveProgress();
+          }).catch(function () {
+            btnRedeem.textContent = "Aktifkan kode saya";
+            markActivated(code);
+            gateMsg("inf", "Kode terkonfirmasi milik akun ini, jadi kamu sudah bisa mulai latihan dari perangkat ini. Status aktivasi gagal disimpan ulang ke server — kalau nanti diminta lagi, masukkan kode yang sama.");
+          });
+        }
+        /* Kode masih kosong: klaim atomik lewat transaksi — update hanya
+           jalan kalau usedBy masih kosong saat transaksi commit. */
+        function claimFresh() {
+          return DB.runTransaction(function (tx) {
+            return tx.get(codeRef).then(function (snap) {
+              if (!snap.exists) throw new Error("not-found");
+              var usedBy = (snap.data() || {}).usedBy || "";
+              if (usedBy && usedBy !== uid) throw new Error("used");
+              if (!usedBy) tx.update(codeRef, { usedBy: uid });
+            });
+          }).then(function () { return finishOk(false); })
+            .catch(function (err) { handleErr(err); });
+        }
+        function checkCode() {
+          /* Baca kode DULU di luar transaksi. Rules Firestore hanya
+             mengizinkan klaim saat usedBy masih kosong, jadi kode yang
+             sudah terikat ke akun ini sendiri tidak boleh diklaim ulang
+             lewat transaksi — cukup buktikan usedBy === UID ini, lalu
+             aktifkan. Kode yang sudah terikat juga bisa tidak terbaca
+             sama sekali dari akun lain (permission-denied); itu kami
+             terjemahkan jadi pesan yang jelas, bukan kode error mentah. */
+          codeRef.get().then(function (snap) {
+            if (!snap.exists) { fail(MSG_NOT_FOUND); return; }
+            var usedBy = (snap.data() || {}).usedBy || "";
+            if (usedBy === uid) { finishOk(true); return; }
+            if (usedBy) { fail(MSG_USED_OTHER); return; }
+            claimFresh();
+          }).catch(function (err) { handleErr(err); });
+        }
+        /* 1) Akun ini sebenarnya sudah aktif? Kalau ya, jangan klaim
+           apa pun — langsung buka dengan kode yang tersimpan. */
+        userRef.get().then(function (usnap) {
+          var udata = usnap.exists ? usnap.data() : null;
+          if (udata && udata.redeemCode) {
+            btnRedeem.textContent = "Aktifkan kode saya";
+            markActivated(udata.redeemCode);
+            loadProgress(udata);
+            return;
+          }
+          checkCode();
+        }).catch(function () { checkCode(); });
       }
 
       /* ---------- Wiring tombol (produksi Firebase) ---------- */
