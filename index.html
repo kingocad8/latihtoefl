@@ -293,15 +293,15 @@
       textarea.mini{width:100%;min-height:74px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);padding:12px;resize:vertical}
       textarea.mini:focus{outline:3px solid #0369A1;border-color:var(--accent)}
       /* Flashcards */
-      .fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
-      .fc{perspective:700px;height:200px;cursor:pointer;background:none;border:none;padding:0;text-align:left}
+      .fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+      .fc{display:block;width:100%;perspective:700px;height:230px;cursor:pointer;background:none;border:none;padding:0;text-align:left;font:inherit;color:inherit}
       .fc-inner{display:block;position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
       .fc.flipped .fc-inner{transform:rotateY(180deg)}
       @media (prefers-reduced-motion: reduce){.fc-inner{transition:none}}
-      .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.5px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;justify-content:center;background:var(--surface);box-shadow:var(--shadow-sm)}
-      .fc-back{transform:rotateY(180deg);background:linear-gradient(150deg,#E0F2FE,#BAE6FD);font-size:.86rem;line-height:1.45;color:#0B2447}
+      .fc-face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.5px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;justify-content:center;background:var(--surface);box-shadow:var(--shadow-sm)}
+      .fc-back{transform:rotateY(180deg);background:linear-gradient(150deg,#E0F2FE,#BAE6FD);font-size:.84rem;line-height:1.45;color:#0B2447}
       @media (prefers-color-scheme: dark){.fc-back{background:var(--surface2);color:var(--ink)}}
-      .fc-word{font-family:"Outfit",sans-serif;font-size:1.4rem;font-weight:800;text-align:center;color:var(--accent)}
+      .fc-word{font-family:"Outfit",sans-serif;font-size:1.4rem;font-weight:800;text-align:center;color:var(--accent);overflow-wrap:anywhere}
       .fc-hint{text-align:center;color:var(--ink2);font-size:.78rem;margin-top:6px}
       .fc.known .fc-face{border-color:var(--ok)}
       .fc.known .fc-word::after{content:" ✓";color:var(--ok)}
@@ -530,11 +530,6 @@
           <input class="g-input" id="redeemInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CONTOH: LTFL-XXXX-XXXX" disabled />
           <button class="g-btn" id="btnRedeem" type="button" disabled>Aktifkan kode saya</button>
           <p class="src" style="margin-top:10px">Kode redeem dibagikan oleh penyedia.</p>
-          <div style="margin-top:14px">
-            <a class="g-btn" style="text-decoration:none" href="https://lynk.id/ochadpage" target="_blank" rel="noopener">Dapatkan Kode Akses — Lynk (Segera Hadir)</a>
-            <p style="margin-top:10px">Harga launch Rp59rb, normal Rp99rb — sekali bayar, lifetime.</p>
-            <p class="src">Toko Lynk kami masih tahap aktivasi, jadi produk belum tampil di sana. Tombol ini mengarah ke toko kami; cek lagi dalam beberapa hari.</p>
-          </div>
         </div>
 
         <button class="g-btn" id="btnEnterApp" type="button" hidden>Mulai latihan →</button>
@@ -623,11 +618,6 @@
               <div class="lp-step"><span class="n">1</span><h4>Klik tombol Masuk</h4><p>Lewat tombol Masuk di menu atau bagian hero.</p></div>
               <div class="lp-step"><span class="n">2</span><h4>Login dengan Google</h4><p>Satu akun Google untuk semua perangkatmu.</p></div>
               <div class="lp-step"><span class="n">3</span><h4>Masukkan kode redeem</h4><p>Cukup sekali saat aktivasi pertama; kode terikat ke akun Google-mu, setelah itu semua menu latihan terbuka.</p></div>
-            </div>
-            <div style="margin-top:18px">
-              <a class="btn" style="text-decoration:none" href="https://lynk.id/ochadpage" target="_blank" rel="noopener">Dapatkan Kode Akses — Lynk (Segera Hadir)</a>
-              <p style="margin-top:10px">Harga launch Rp59rb, normal Rp99rb — sekali bayar, lifetime.</p>
-              <p class="src">Toko Lynk kami masih tahap aktivasi, jadi produk belum tampil di sana. Tombol ini mengarah ke toko kami; cek lagi dalam beberapa hari.</p>
             </div>
             <p style="margin-top:18px"><button class="btn js-open-gate" type="button">Masuk sekarang</button></p>
           </div>
