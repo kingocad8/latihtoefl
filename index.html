@@ -297,6 +297,9 @@
       .score-badge.good{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
       .score-badge.mid{background:var(--amber-soft);color:var(--amber);border-color:var(--amber)}
       .heard{font-size:.9rem;color:var(--ink2);font-style:italic;margin-top:6px}
+      .spk-attempt{border-top:1px solid var(--line);padding:12px 0}
+      .spk-attempt:first-of-type{border-top:none;padding-top:4px}
+      .spk-attempt-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
       textarea.mini{width:100%;min-height:74px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);padding:12px;resize:vertical}
       textarea.mini:focus{outline:3px solid #0369A1;border-color:var(--accent)}
       /* Flashcards */
@@ -2430,6 +2433,7 @@
           <p class="src"><b>Bank soal Speaking di halaman ini: 15 set Listen and Repeat (105 kalimat) · 15 set Take an Interview (60 pertanyaan)</b> — audio model tiap kalimat/pertanyaan bisa diputar (audio asli atau suara teks), lalu rekam dan analisis jawabanmu.</p>
           <h3>Bagaimana ETS menilai bicara (SpeechRater)</h3>
           <p>Mesin <b>SpeechRater</b> ETS menganalisis <b>pengucapan, kelancaran (fluency), kosakata, dan grammar</b> dari transkrip otomatis suaramu; penilai manusia menambahkan <b>Delivery</b> (pelafalan, ritme, intonasi, kecepatan, jeda), <b>Language Use</b>, dan <b>Topic Development</b> (isi &amp; koherensi) — dengan catatan resmi ETS bahwa SpeechRater terbatas pada aspek Topic Development. Analisis di web ini meniru sisi mesinnnya: ketepatan kata (Listen &amp; Repeat), kata per menit, kata pengisi (filler), dan grammar dari transkrip (Interview).</p>
+          <p class="src">Rekaman suara tidak diunggah; transkrip dan skormu tersimpan di akunmu dan bisa dilihat lagi di riwayat.</p>
           <div class="note"><p><b>Izin mikrofon:</b> tombol Rekam meminta izin mikrofon dari browser dan semua proses berjalan <b>di perangkatmu</b>. Transkrip dibuat oleh fitur pengenalan suara browser (tersedia di Chrome). Kalau browser tidak mendukungnya, kamu tetap bisa mendengarkan model, mengulangi dengan lantang, lalu membuka teks model untuk memeriksa sendiri.</p></div>
           <div class="tip-grid">
             <div class="tip"><h4>Listen and Repeat</h4><ul><li>Tirukan persis: pelafalan, ujung kata (-s, -ed), intonasi, dan ritme. <b>Jangan</b> memparafrase.</li><li>Dengarkan sekali, fokus pada gugus kata (chunk), bukan kata per kata.</li><li>Bunyi jebakan orang Indonesia: /θ/ (<i>think</i> ≠ tink), /ð/ (<i>the</i>), /v/ (<i>very</i> ≠ ferry).</li></ul></div>
@@ -2619,6 +2623,12 @@
           <h2>Take an Interview — Set 15</h2>
           <p class="sub">Bank soal. Topik: belajar bahasa asing. Target ±45 detik per jawaban.</p>
           <div id="interview15"></div>
+        </div>
+
+        <div class="card">
+          <h2>Riwayat percobaan Speaking</h2>
+          <p class="sub">Setiap percobaan Listen and Repeat dan Take an Interview yang kamu kerjakan — termasuk di Simulasi Ujian — tercatat di sini: tugasnya, kapan, transkrip ucapanmu, dan skornya. Tersimpan di akunmu (50 percobaan terakhir), tanpa file audio.</p>
+          <div id="speakHistory"><p class="src">Memuat riwayat…</p></div>
         </div>
       </section>
 
@@ -3035,7 +3045,7 @@
       function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
 
       /* ---------- Progress (in-memory, session only) ---------- */
-      var PROGRESS = { r1: null, r2: null, l1: null, bas1: null, bas2: null, gA: null, gB: null, gC: null, writing: {}, speaking: {}, vocab: 0, repeatScores: {} };
+      var PROGRESS = { r1: null, r2: null, l1: null, bas1: null, bas2: null, gA: null, gB: null, gC: null, writing: {}, speaking: {}, vocab: 0, repeatScores: {}, speakAttempts: [] };
       function setDash(key, text, pct) {
         var el = document.querySelector('[data-dash="' + key + '"]');
         if (el) el.textContent = text;
@@ -3764,6 +3774,42 @@
         t.forEach(function (w) { if (pool[w] > 0) { hit++; pool[w]--; } });
         return hit / t.length * 100;
       }
+      /* ---------- Riwayat percobaan Speaking (transkrip + skor saja, tanpa audio) ---------- */
+      function speakTaskLabel(block) {
+        var key = block.getAttribute("data-key") || "";
+        var m = key.match(/^(repeat|interview)(\d+)-(\d+)$/);
+        if (!m) return block.getAttribute("data-mode") === "interview" ? "Take an Interview" : "Listen and Repeat";
+        return (m[1] === "repeat" ? "Listen and Repeat — Set " : "Take an Interview — Set ") + m[2] + (m[1] === "repeat" ? " · Kalimat " : " · Pertanyaan ") + m[3];
+      }
+      function logSpeakAttempt(task, transcript, score) {
+        transcript = (transcript || "").trim();
+        if (!transcript) return;
+        if (!PROGRESS.speakAttempts) PROGRESS.speakAttempts = [];
+        PROGRESS.speakAttempts.push({ ts: Date.now(), task: task, text: transcript, score: score });
+        if (PROGRESS.speakAttempts.length > 50) PROGRESS.speakAttempts = PROGRESS.speakAttempts.slice(-50);
+        renderSpeakHistory();
+      }
+      function renderSpeakHistory() {
+        var host = document.getElementById("speakHistory");
+        if (!host) return;
+        var list = (PROGRESS.speakAttempts || []).slice().reverse();
+        if (!list.length) {
+          host.innerHTML = '<p class="src">Belum ada percobaan terekam. Rekam satu kalimat Listen and Repeat atau analisis satu jawaban Interview — transkrip dan skormu akan tercatat di sini.</p>';
+          return;
+        }
+        var h = "";
+        list.forEach(function (a) {
+          var d = new Date(a.ts);
+          var when = d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) + " · " + d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+          h += '<div class="spk-attempt"><div class="spk-attempt-head"><b>' + esc(a.task) + '</b><span class="score-badge">' + esc(a.score) + '</span></div>' +
+            '<p class="src" style="margin:2px 0 6px">' + esc(when) + '</p>' +
+            '<p style="margin:0">“' + esc(a.text) + '”</p></div>';
+        });
+        host.innerHTML = h;
+      }
+      $$('.tabbtn[data-tab="speaking"]').forEach(function (b) { b.addEventListener("click", renderSpeakHistory); });
+      [1500, 4000, 9000].forEach(function (ms) { setTimeout(renderSpeakHistory, ms); });
+
       function scoreRepeat(block) {
         var said = block.getAttribute("data-said") || "";
         var target = block.getAttribute("data-target");
@@ -3778,6 +3824,7 @@
         slot.innerHTML = '<span class="score-badge ' + cls + '">Kecocokan kata: ' + Math.round(pct) + '%</span>';
         heard.textContent = "Yang terdengar: “" + said + "” — bandingkan ujung kata (-s, -ed) dan kata yang hilang dengan teks model.";
         PROGRESS.repeatScores[block.getAttribute("data-key")] = pct;
+        if ((block.getAttribute("data-key") || "").indexOf("sim") !== 0) logSpeakAttempt(speakTaskLabel(block), said, "Kecocokan kata " + Math.round(pct) + "%");
         updateDashboard();
       }
       document.addEventListener("click", function (ev) {
@@ -3927,6 +3974,7 @@
         out.innerHTML = h;
         out.classList.add("show");
         PROGRESS.speaking[block.getAttribute("data-key")] = overall;
+        logSpeakAttempt(speakTaskLabel(block), text, "Band " + overall.toFixed(1) + " / 6");
         updateDashboard();
       }
 
@@ -5218,6 +5266,10 @@
         bands.speaking = pctToBand((repAvg / 100 * 0.5 + intScore * 0.5) * 100);
         var overall = round5((bands.reading + bands.listening + bands.writing + bands.speaking) / 4);
         P.sim = { count: (P.sim && P.sim.count ? P.sim.count : 0) + 1, last: { date: Date.now(), bands: bands, overall: overall } };
+        if (typeof logSpeakAttempt === "function") {
+          sp.reps.forEach(function (r, i) { if (r.said) logSpeakAttempt("Simulasi Ujian — Listen and Repeat · Kalimat " + (i + 1), r.said, "Kecocokan kata " + r.pct + "%"); });
+          sp.ints.forEach(function (it, i) { if (it.text && it.text.trim()) logSpeakAttempt("Simulasi Ujian — Take an Interview · Pertanyaan " + (i + 1), it.text, "Band Speaking simulasi " + bands.speaking.toFixed(1) + " / 6"); });
+        }
         /* Render hasil */
         var names = { reading: "Reading", listening: "Listening", writing: "Writing", speaking: "Speaking" };
         var sh = '<div class="sim-band-grid">';
@@ -5433,6 +5485,7 @@
           if (p.progress.writing) P.writing = p.progress.writing;
           if (p.progress.speaking) P.speaking = p.progress.speaking;
           if (p.progress.repeatScores) P.repeatScores = p.progress.repeatScores;
+          if (p.progress.speakAttempts) P.speakAttempts = p.progress.speakAttempts;
           if (p.progress.bank) P.bank = p.progress.bank;
           if (p.progress.sim) P.sim = p.progress.sim;
           if (typeof p.progress.vocab === "number") P.vocab = p.progress.vocab;
@@ -6599,6 +6652,16 @@
           var reps = Object.keys(P.repeatScores || {});
           if (reps.length) { var avg = reps.reduce(function (a, k) { return a + P.repeatScores[k]; }, 0) / reps.length; rows.push(setRow("Listen and Repeat \u2014 rata-rata kecocokan kata", Math.round(avg) + "% (" + reps.length + " kalimat)")); }
           secBlock("Speaking", rows);
+          var attempts = P.speakAttempts || [];
+          if (attempts.length) {
+            any = true;
+            h += "<h3>Riwayat percobaan Speaking</h3>";
+            attempts.slice().reverse().forEach(function (a) {
+              var ad = new Date(a.ts);
+              var awhen = ad.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+              h += '<div class="spk-attempt"><div class="spk-attempt-head"><b>' + esc2(a.task) + '</b><span class="score-badge">' + esc2(a.score) + '</span></div><p class="src" style="margin:2px 0 6px">' + esc2(awhen) + '</p><p style="margin:0">“' + esc2(a.text) + '”</p></div>';
+            });
+          }
           rows = [];
           [["gA", "Drill A \u00b7 Subject\u2013Verb Agreement"], ["gB", "Drill B \u00b7 Articles, Tense & Bentuk Kata"], ["gC", "Drill C \u00b7 Perbaiki Kalimatnya"], ["gD", "Drill D \u00b7 Prepositions & Collocations"], ["gE", "Drill E \u00b7 Passive Voice & Participles"], ["gF", "Drill F \u00b7 Perbaiki Kalimatnya II"]].forEach(function (p) { var x = P[p[0]]; if (x) rows.push(setRow(p[1], x.c + "/" + x.t + " benar")); });
           if (typeof P.vocab === "number" && P.vocab > 0) rows.push(setRow("Kosakata AWL dikuasai", P.vocab + " / 40 kata"));
