@@ -139,7 +139,7 @@
       body.chat-open .floattimer{visibility:hidden}
       @media (max-width:640px){.chatfab{right:12px;bottom:14px}.chatpanel{right:12px;bottom:76px}}
       /* Menu bar ala Kamus Oleokimia: segmented bar sticky yang selalu terlihat
-         (Beranda · Latihan · Belajar · Profil · Harga) + drill-down sub-menu.
+         (Beranda · Latihan · Belajar · Dashboard · Profil) + drill-down sub-menu.
          Tanpa hamburger, tanpa drawer — di HP bar bisa digeser horizontal. */
       .menurow{max-width:1120px;margin:0 auto;padding:0 18px 12px}
       .segbar{display:flex;gap:8px;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -438,7 +438,9 @@
       .app-shell{display:none}
       body.app-unlocked .app-shell{display:block}
       body.app-unlocked .landing{display:none}
-      .lp-nav{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--line);padding:12px 0}
+      .lp-nav{position:-webkit-sticky;position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1.5px solid var(--line);box-shadow:var(--shadow-sm);padding:12px 0}
+      /* Header landing sticky: lompatan anchor berhenti di bawah header, bukan tertutup header */
+      .landing section[id],.landing .card[id]{scroll-margin-top:112px}
       .lp-nav .row{max-width:1120px;margin:0 auto;padding:0 18px;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;position:relative}
       .lp-brand{font-family:"Outfit",sans-serif;font-weight:900;font-size:1.25rem;color:var(--ink);margin-right:auto;letter-spacing:-.02em;white-space:nowrap}
       .lp-brand span{color:var(--accent)}
@@ -684,8 +686,8 @@
           <button class="tabbtn segbtn" type="button" data-tab="mulai" aria-current="page">Beranda</button>
           <button class="segbtn seg-parent" type="button" data-menu="latihan" aria-haspopup="true" aria-expanded="false">Latihan <span class="caret" aria-hidden="true">▾</span></button>
           <button class="segbtn seg-parent" type="button" data-menu="belajar" aria-haspopup="true" aria-expanded="false">Belajar <span class="caret" aria-hidden="true">▾</span></button>
+          <button class="tabbtn segbtn" type="button" data-tab="dashboard">Dashboard</button>
           <button class="segbtn seg-parent profile-btn" type="button" data-menu="profil" aria-haspopup="true" aria-expanded="false" aria-label="Menu profil"><span class="avatar" id="menuAvatar" aria-hidden="true">?</span>Profil <span class="caret" aria-hidden="true">▾</span></button>
-          <button class="tabbtn segbtn" type="button" data-tab="harga">Harga</button>
         </div>
       </div>
       <div class="drillrow" id="drillRow" hidden>
@@ -716,6 +718,15 @@
       <!-- ============ TAB: MULAI ============ -->
       <section class="tabpane active" id="pane-mulai">
         <div class="card">
+          <h2>Apa itu LatihTOEFL?</h2>
+          <p>LatihTOEFL adalah web latihan TOEFL iBT format terbaru ETS (berlaku sejak 21 Januari 2026) untuk siapa pun yang mau tes TOEFL — apa pun tujuanmu: kerja, beasiswa, atau kuliah di luar negeri. Isinya latihan Reading, Listening, Writing, dan Speaking, plus cek grammar &amp; struktur ala e-rater, analisis bicara ala SpeechRater, dan drill khusus buat kesalahan khas orang Indonesia. Semua penjelasannya pakai Bahasa Indonesia.</p>
+          <p>Bank soalnya besar dan bisa difokuskan per section: <b>15 set Reading (195 soal), 15 set Listening (179 soal), 15 set Build a Sentence, 15 tugas Email, 15 tugas Academic Discussion, 15 set Listen and Repeat, dan 15 set Take an Interview</b> — kerjakan section yang kamu mau, berkali-kali, dengan soal yang selalu baru. Ada juga Simulasi Ujian penuh (120 soal · 90 menit) di menu Latihan, dan tombol <b>Tanya AI</b> mengambang di kanan bawah untuk diskusi materi.</p>
+          <h3>Format TOEFL iBT 2026 — ringkasan</h3>
+          <p>Urutan tetap: <b>Reading</b> (50 soal · 30 menit, adaptif dua tahap) → <b>Listening</b> (47 soal · 29 menit, adaptif dua tahap) → <b>Writing</b> (12 soal · 23 menit) → <b>Speaking</b> (11 soal · 8 menit). Skor tiap section memakai skala baru <b>1–6</b> (kelipatan 0,5); skor keseluruhan adalah rata-rata empat section. Semua band yang tampil di web ini adalah <b>estimasi latihan</b> dari pemeriksa otomatis yang meniru rubrik ETS — bukan skor resmi ETS.</p>
+          <p class="src">Web ini bukan produk ETS dan tidak berafiliasi dengan ETS; TOEFL dan TOEFL iBT adalah merek ETS. <b>Not affiliated with or endorsed by ETS.</b></p>
+        </div>
+
+        <div class="card">
           <h2>Format TOEFL iBT 2026 — yang benar-benar akan kamu hadapi</h2>
           <p class="sub">ETS mengubah total TOEFL iBT di seluruh dunia pada <b>21 Januari 2026</b>. Banyak panduan di internet masih menulis format lama (skor 0–120, esai independen 300 kata, Speaking 4 tugas) — format itu <b>sudah tidak berlaku</b>. Semua latihan di web ini mengikuti format baru di bawah ini.</p>
           <table class="ftable">
@@ -737,24 +748,6 @@
         </div>
 
         <div class="card">
-          <h2>Progress sesi ini</h2>
-          <p class="sub">Progress tercatat selama halaman ini terbuka. Selesaikan tiap modul untuk melihat estimasi band latihanmu terbentuk.</p>
-          <div class="dash-grid">
-            <div class="dash"><h4>Reading</h4><div class="big" data-dash="reading">—</div><div class="lbl">soal benar dari 195 (15 set)</div><div class="pbar"><i data-dashbar="reading"></i></div></div>
-            <div class="dash"><h4>Listening</h4><div class="big" data-dash="listening">—</div><div class="lbl">soal benar dari 179 (15 set)</div><div class="pbar"><i data-dashbar="listening"></i></div></div>
-            <div class="dash"><h4>Build a Sentence</h4><div class="big" data-dash="bas">—</div><div class="lbl">kalimat benar dari 75 (15 set)</div><div class="pbar"><i data-dashbar="bas"></i></div></div>
-            <div class="dash"><h4>Grammar Drills</h4><div class="big" data-dash="grammar">—</div><div class="lbl">soal benar dari 30 (6 drill)</div><div class="pbar"><i data-dashbar="grammar"></i></div></div>
-            <div class="dash"><h4>Writing — band terbaik</h4><div class="big" data-dash="writing">—</div><div class="lbl">estimasi latihan, skala 1–6</div><div class="pbar"><i data-dashbar="writing"></i></div></div>
-            <div class="dash"><h4>Speaking — band terbaik</h4><div class="big" data-dash="speaking">—</div><div class="lbl">dari analisis transkrip wawancara</div><div class="pbar"><i data-dashbar="speaking"></i></div></div>
-            <div class="dash"><h4>Kosakata AWL</h4><div class="big" data-dash="vocab">0 / 40</div><div class="lbl">kata ditandai sudah dikuasai</div><div class="pbar"><i data-dashbar="vocab"></i></div></div>
-            <div class="dash"><h4>Listen &amp; Repeat</h4><div class="big" data-dash="repeat">—</div><div class="lbl">rata-rata kecocokan kata</div><div class="pbar"><i data-dashbar="repeat"></i></div></div>
-            <div class="dash"><h4>Streak latihan</h4><div class="big" data-dash="streak">0 hari</div><div class="lbl">hari beruntun kamu latihan — tersimpan di akunmu</div><div class="pbar"><i data-dashbar="streak"></i></div></div>
-          </div>
-          <p class="src">Progres di atas tersimpan otomatis ke akun Google kamu (Firestore) dan tersinkron antar perangkat — lanjutkan di HP atau laptop, progresnya nyambung. Saat offline, progres tersimpan di perangkat ini dulu lalu tersinkron saat kembali online.</p>
-          <div class="note blue"><p><b>Cara pakai yang disarankan:</b> (1) kerjakan satu set Reading &amp; Listening untuk pemanasan, (2) latih Build a Sentence dan Grammar Drill untuk membenahi struktur, (3) tulis Email dan Academic Discussion lalu periksa dengan Cek AI, (4) tutup dengan Listen &amp; Repeat dan Interview. Ulangi — pemeriksa AI melacak kategori kesalahanmu, jadi fokuskan drill berikutnya ke kategori terlemahmu.</p></div>
-        </div>
-
-        <div class="card">
           <h2>Sumber resmi ETS (gratis)</h2>
           <p class="sub">Mulai dari yang resmi dulu. Web ini melengkapi — bukan menggantikan — materi ETS.</p>
           <ul>
@@ -765,13 +758,40 @@
           </ul>
           <div class="note"><p><b>Jangan tertipu halaman lama:</b> halaman latihan gratis ETS versi lama (toeflFreePractice2023) masih menampilkan format pra-2026 — 4 soal Speaking dan 2 tugas Writing esai, tanpa skor. Jangan jadikan itu patokan format.</p></div>
         </div>
+      </section>
+
+
+      <!-- ============ TAB: DASHBOARD ============ -->
+      <section class="tabpane" id="pane-dashboard">
         <div class="card">
-          <h2>Apa itu LatihTOEFL?</h2>
-          <p>LatihTOEFL adalah web latihan TOEFL iBT format terbaru ETS (berlaku sejak 21 Januari 2026) untuk siapa pun yang mau tes TOEFL — apa pun tujuanmu: kerja, beasiswa, atau kuliah di luar negeri. Isinya latihan Reading, Listening, Writing, dan Speaking, plus cek grammar &amp; struktur ala e-rater, analisis bicara ala SpeechRater, dan drill khusus buat kesalahan khas orang Indonesia. Semua penjelasannya pakai Bahasa Indonesia.</p>
-          <p>Bank soalnya besar dan bisa difokuskan per section: <b>15 set Reading (195 soal), 15 set Listening (179 soal), 15 set Build a Sentence, 15 tugas Email, 15 tugas Academic Discussion, 15 set Listen and Repeat, dan 15 set Take an Interview</b> — kerjakan section yang kamu mau, berkali-kali, dengan soal yang selalu baru. Ada juga Simulasi Ujian penuh (120 soal · 90 menit) di menu Latihan, dan tombol <b>Tanya AI</b> mengambang di kanan bawah untuk diskusi materi.</p>
-          <h3>Format TOEFL iBT 2026 — ringkasan</h3>
-          <p>Urutan tetap: <b>Reading</b> (50 soal · 30 menit, adaptif dua tahap) → <b>Listening</b> (47 soal · 29 menit, adaptif dua tahap) → <b>Writing</b> (12 soal · 23 menit) → <b>Speaking</b> (11 soal · 8 menit). Skor tiap section memakai skala baru <b>1–6</b> (kelipatan 0,5); skor keseluruhan adalah rata-rata empat section. Semua band yang tampil di web ini adalah <b>estimasi latihan</b> dari pemeriksa otomatis yang meniru rubrik ETS — bukan skor resmi ETS.</p>
-          <p class="src">Web ini bukan produk ETS dan tidak berafiliasi dengan ETS; TOEFL dan TOEFL iBT adalah merek ETS. <b>Not affiliated with or endorsed by ETS.</b></p>
+          <h2>Dashboard progres</h2>
+          <p class="sub">Rekap visual progres belajarmu — dari data yang sama dengan Riwayat Belajar, tersimpan di akunmu dan tersinkron antar perangkat.</p>
+          <div class="dash-grid">
+            <div class="dash"><h4>Total soal benar</h4><div class="big" id="dashTotalBenar">—</div><div class="lbl">dari soal yang sudah dikerjakan (Reading, Listening, Build a Sentence, Grammar)</div><div class="pbar"><i id="dashTotalBenarBar"></i></div></div>
+            <div class="dash"><h4>Total hari aktif</h4><div class="big" id="dashHariAktif">—</div><div class="lbl">hari kamu tercatat latihan di akun ini</div><div class="pbar"><i id="dashHariAktifBar"></i></div></div>
+            <div class="dash"><h4>Simulasi Ujian</h4><div class="big" id="dashSimulasi">—</div><div class="lbl">jumlah simulasi penuh yang sudah diselesaikan</div><div class="pbar"><i id="dashSimulasiBar"></i></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Progress sesi ini</h2>
+          <p class="sub">Progress tercatat selama halaman ini terbuka. Selesaikan tiap modul untuk melihat estimasi band latihanmu terbentuk.</p>
+          <div class="dash-grid">
+            <div class="dash"><h4>Reading</h4><div class="big" data-dash="reading">—</div><div class="lbl">soal benar dari 195 (15 set)</div><div class="pbar"><i data-dashbar="reading"></i></div></div>
+            <div class="dash"><h4>Listening</h4><div class="big" data-dash="listening">—</div><div class="lbl">soal benar dari 179 (15 set)</div><div class="pbar"><i data-dashbar="listening"></i></div></div>
+            <div class="dash"><h4>Build a Sentence</h4><div class="big" data-dash="bas">—</div><div class="lbl">kalimat benar dari 75 (15 set)</div><div class="pbar"><i data-dashbar="bas"></i></div></div>
+            <div class="dash"><h4>Write an Email — band terbaik</h4><div class="big" id="dashEmail">—</div><div class="lbl">estimasi latihan, skala 1–6</div><div class="pbar"><i id="dashEmailBar"></i></div></div>
+            <div class="dash"><h4>Academic Discussion — band terbaik</h4><div class="big" id="dashDisc">—</div><div class="lbl">estimasi latihan, skala 1–6</div><div class="pbar"><i id="dashDiscBar"></i></div></div>
+            <div class="dash"><h4>Grammar Drills</h4><div class="big" data-dash="grammar">—</div><div class="lbl">soal benar dari 30 (6 drill)</div><div class="pbar"><i data-dashbar="grammar"></i></div></div>
+            <div class="dash"><h4>Writing — band terbaik</h4><div class="big" data-dash="writing">—</div><div class="lbl">estimasi latihan, skala 1–6</div><div class="pbar"><i data-dashbar="writing"></i></div></div>
+            <div class="dash"><h4>Speaking — band terbaik</h4><div class="big" data-dash="speaking">—</div><div class="lbl">dari analisis transkrip wawancara</div><div class="pbar"><i data-dashbar="speaking"></i></div></div>
+            <div class="dash"><h4>Kosakata AWL</h4><div class="big" data-dash="vocab">0 / 40</div><div class="lbl">kata ditandai sudah dikuasai</div><div class="pbar"><i data-dashbar="vocab"></i></div></div>
+            <div class="dash"><h4>Listen &amp; Repeat</h4><div class="big" data-dash="repeat">—</div><div class="lbl">rata-rata kecocokan kata</div><div class="pbar"><i data-dashbar="repeat"></i></div></div>
+            <div class="dash"><h4>Take an Interview — band terbaik</h4><div class="big" id="dashInterview">—</div><div class="lbl">estimasi latihan dari jawaban yang dianalisis, skala 1–6</div><div class="pbar"><i id="dashInterviewBar"></i></div></div>
+            <div class="dash"><h4>Streak latihan</h4><div class="big" data-dash="streak">0 hari</div><div class="lbl">hari beruntun kamu latihan — tersimpan di akunmu</div><div class="pbar"><i data-dashbar="streak"></i></div></div>
+          </div>
+          <p class="src">Progres di atas tersimpan otomatis ke akun Google kamu (Firestore) dan tersinkron antar perangkat — lanjutkan di HP atau laptop, progresnya nyambung. Saat offline, progres tersimpan di perangkat ini dulu lalu tersinkron saat kembali online.</p>
+          <div class="note blue"><p><b>Cara pakai yang disarankan:</b> (1) kerjakan satu set Reading &amp; Listening untuk pemanasan, (2) latih Build a Sentence dan Grammar Drill untuk membenahi struktur, (3) tulis Email dan Academic Discussion lalu periksa dengan Cek AI, (4) tutup dengan Listen &amp; Repeat dan Interview. Ulangi — pemeriksa AI melacak kategori kesalahanmu, jadi fokuskan drill berikutnya ke kategori terlemahmu.</p></div>
         </div>
       </section>
 
@@ -3010,45 +3030,6 @@
           <h2>Riwayat Belajar</h2>
           <p class="sub">Riwayat belajarmu dari progres yang tersimpan di akun ini — hanya data yang benar-benar sudah kamu kerjakan.</p>
           <div id="historyBody"><p class="src">Memuat riwayat…</p></div>
-        </div>
-      </section>
-
-      <!-- ============ TAB: HARGA ============ -->
-      <section class="tabpane" id="pane-harga">
-        <div class="card">
-          <h2>Paket &amp; harga</h2>
-          <p class="sub">Satu paket untuk semua fitur — sekali bayar, berlaku selamanya (lifetime). Tidak ada biaya bulanan.</p>
-          <div class="price-grid">
-            <div>
-              <p style="margin:0"><b>LatihTOEFL — Akses Penuh</b></p>
-              <p class="price-amount">Rp59.000<span class="price-tag">Harga launch</span></p>
-              <p class="price-was">Harga normal <s>Rp99.000</s> · sekali bayar</p>
-              <a class="btn lynk-btn" href="https://lynk.id/ochadpage" target="_blank" rel="noopener">Beli lewat Lynk</a>
-              <p class="src" style="margin-top:10px">Beli lagi lewat Lynk bila kamu butuh kode redeem untuk akun Google lain (misalnya untuk hadiah) — satu kode hanya berlaku untuk satu akun Google.</p>
-            </div>
-            <ul class="ok-list" style="margin:0">
-              <li><b>640+ soal &amp; tugas</b> di bank soal — semua seksi lengkap</li>
-              <li><b>15 set per tipe tugas</b> — Reading, Listening, Writing, dan Speaking</li>
-              <li><b>Format TOEFL iBT 2026</b> — 12 tipe tugas sesuai format terbaru ETS</li>
-              <li><b>Penilaian AI Writing 10×/hari</b> — estimasi band plus rincian kesalahan</li>
-              <li><b>Tanya AI 20 pesan/hari</b> — diskusi grammar, kosakata, dan strategi</li>
-              <li><b>Simulasi Ujian 120 soal</b> — urutan dan format persis ujian asli</li>
-              <li><b>Flashcard kosakata AWL</b> — kata-kata akademik yang paling sering keluar</li>
-              <li><b>Drill Grammar</b> — fokus ke kesalahan khas penutur Bahasa Indonesia</li>
-              <li><b>Progres tersimpan di akun Google</b> — nyambung di HP, tablet, dan laptop</li>
-            </ul>
-          </div>
-        </div>
-        <div class="card">
-          <h2>Cara mulai</h2>
-          <p class="sub">Dari pembayaran sampai latihan pertama, empat langkah saja.</p>
-          <div class="lp-steps">
-            <div class="lp-step"><span class="n">1</span><h4>Pilih paket &amp; bayar</h4><p>Klik tombol "Beli lewat Lynk" dan selesaikan pembayaran.</p></div>
-            <div class="lp-step"><span class="n">2</span><h4>Terima kode redeem</h4><p>Kode redeem dikirimkan kepadamu setelah pembayaran berhasil.</p></div>
-            <div class="lp-step"><span class="n">3</span><h4>Masuk dengan Google</h4><p>Satu akun Google untuk semua perangkatmu — HP, tablet, dan laptop.</p></div>
-            <div class="lp-step"><span class="n">4</span><h4>Aktifkan kode</h4><p>Masukkan kode redeem sekali saja; setelah itu semua menu latihan langsung terbuka.</p></div>
-          </div>
-          <div class="note" style="margin-bottom:0"><p><b>Catatan:</b> satu kode redeem hanya berlaku untuk <b>satu akun Google</b>.</p></div>
         </div>
       </section>
 
@@ -6506,7 +6487,7 @@
       })();
     </script>
     <script>
-      /* Menu bar (Beranda/Latihan/Belajar/Profil/Harga) + Akun + Pengaturan + Riwayat Belajar.
+      /* Menu bar (Beranda/Latihan/Belajar/Dashboard/Profil) + Akun + Pengaturan + Riwayat Belajar.
          Murni navigasi & tampilan: tidak mengubah logika latihan, gerbang, AI, atau progres. */
       (function () {
         var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -6658,6 +6639,61 @@
         }
         $$('.tabbtn[data-tab="history"]').forEach(function (b) { b.addEventListener("click", renderHistory); });
         [2000, 5000, 9000].forEach(function (ms) { setTimeout(renderHistory, ms); });
+      })();
+    </script>
+    <script>
+      /* Dashboard progres: rekap visual dari sumber data yang sama dengan
+         Riwayat Belajar (window.PROGRESS + ACTIVITY per akun). Murni tampilan:
+         tidak mengubah logika latihan, gerbang, AI, atau penyimpanan progres. */
+      (function () {
+        var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+        function setStat(id, barId, text, pct) {
+          var el = document.getElementById(id); if (el) el.textContent = text;
+          var bar = document.getElementById(barId); if (bar) bar.style.width = Math.max(0, Math.min(100, pct || 0)) + "%";
+        }
+        function bestBand(map, prefix) {
+          var best = null;
+          Object.keys(map || {}).forEach(function (k) {
+            if (prefix && k.indexOf(prefix) !== 0) return;
+            var v = Number(map[k]);
+            if (!isNaN(v) && (best === null || v > best)) best = v;
+          });
+          return best;
+        }
+        function renderDashboard() {
+          var P = window.PROGRESS || {};
+          var bank = P.bank || {};
+          var cTot = 0, tTot = 0, i;
+          function add(o) { if (o) { cTot += o.c || 0; tTot += o.t || 0; } }
+          add(P.r1); add(P.r2);
+          for (i = 3; i <= 15; i++) add(bank["r" + i]);
+          add(P.l1);
+          for (i = 2; i <= 15; i++) add(bank["l" + i]);
+          for (i = 1; i <= 15; i++) add(P["bas" + i]);
+          ["gA", "gB", "gC", "gD", "gE", "gF"].forEach(function (k) { add(P[k]); });
+          if (tTot > 0) setStat("dashTotalBenar", "dashTotalBenarBar", cTot + " / " + tTot, cTot / tTot * 100);
+          var act = (typeof ACTIVITY !== "undefined") ? ACTIVITY : null;
+          var days = (act && act.days) ? act.days.length : 0;
+          if (days > 0) setStat("dashHariAktif", "dashHariAktifBar", days + " hari", Math.min(100, days / 30 * 100));
+          if (P.sim && P.sim.count) {
+            var simTxt = P.sim.count + "\u00d7 selesai";
+            if (P.sim.last) simTxt += " \u00b7 terakhir " + Number(P.sim.last.overall).toFixed(1) + " / 6";
+            setStat("dashSimulasi", "dashSimulasiBar", simTxt, Math.min(100, P.sim.count / 10 * 100));
+          }
+          var eB = bestBand(P.writing, "email");
+          if (eB !== null) setStat("dashEmail", "dashEmailBar", eB.toFixed(1) + " / 6", eB / 6 * 100);
+          var dB = bestBand(P.writing, "disc");
+          if (dB !== null) setStat("dashDisc", "dashDiscBar", dB.toFixed(1) + " / 6", dB / 6 * 100);
+          var iB = bestBand(P.speaking, null);
+          if (iB !== null) setStat("dashInterview", "dashInterviewBar", iB.toFixed(1) + " / 6", iB / 6 * 100);
+        }
+        $$('.tabbtn[data-tab="dashboard"]').forEach(function (b) { b.addEventListener("click", renderDashboard); });
+        [2000, 5000, 9000].forEach(function (ms) { setTimeout(renderDashboard, ms); });
+        if (typeof window.updateDashboard === "function") {
+          var prevUD2 = window.updateDashboard;
+          window.updateDashboard = function () { prevUD2(); renderDashboard(); };
+        }
+        window.renderDashboard = renderDashboard;
       })();
     </script>
   </body>
