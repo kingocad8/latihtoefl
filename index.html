@@ -91,11 +91,11 @@
       .note p{margin:0}
       .src{font-size:.82rem;color:var(--ink2)}
       /* Format table -> stacked cards on mobile */
-      .ftable{width:100%;border-collapse:collapse;margin:8px 0 4px}
-      .ftable th,.ftable td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+      .ftable{width:100%;max-width:100%;border-collapse:collapse;margin:8px 0 4px;table-layout:fixed}
+      .ftable th,.ftable td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:break-word}
       .ftable th{font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
-      .ftable td.n{font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:nowrap}
-      @media (max-width:640px){
+      .ftable td.n{font-family:"IBM Plex Mono",monospace;font-weight:600;white-space:normal}
+      @media (max-width:900px){
         .ftable thead{display:none}
         .ftable,.ftable tbody,.ftable tr,.ftable td{display:block;width:100%}
         .ftable tr{border:1.5px solid var(--line);border-radius:16px;margin-bottom:10px;padding:10px 12px;background:var(--surface2)}
@@ -175,6 +175,26 @@
       .set-hidden{display:none!important}
       .more-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-6px 0 24px}
       .more-wrap .more-count{font-size:.86rem;color:var(--ink2);font-weight:600}
+      /* Baris kontrol set di ATAS section latihan + filter "Tampilkan set" */
+      .setbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 18px}
+      .setbar .more-count{font-size:.86rem;color:var(--ink2);font-weight:600}
+      .setfilter{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+      .setfilter .sf-label{font-size:.86rem;font-weight:700;color:var(--ink2);margin-right:2px}
+      .sf-chip{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 14px;font-weight:700;font-size:.86rem;cursor:pointer;font-family:inherit}
+      .sf-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+      /* Halaman Tenses + hub Topik Belajar: semua kartu nge-wrap, tanpa tabel lebar */
+      .t-rumus{font-family:"IBM Plex Mono",monospace;background:var(--surface2);border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;font-size:.92rem;line-height:1.6;overflow-wrap:break-word;margin:10px 0}
+      .t-sec{margin:12px 0 0}
+      .t-sec h4{margin:0 0 6px;font-size:.92rem}
+      .t-sec ul{margin:0;padding-left:20px}
+      .t-sec li{margin:3px 0;overflow-wrap:break-word}
+      .t-ex{overflow-wrap:break-word;margin:4px 0}
+      .t-ex .id{display:block;color:var(--ink2);font-size:.9rem}
+      .topik-item{border:1.5px solid var(--line);border-radius:16px;padding:12px 16px;margin:10px 0;background:var(--surface2)}
+      .topik-item summary{cursor:pointer;font-weight:800;font-family:"Outfit",sans-serif;overflow-wrap:break-word}
+      .topik-item p,.topik-item li{overflow-wrap:break-word}
+      .topik-item ul{margin:6px 0;padding-left:20px}
+      .topik-item li{margin:3px 0}
       /* Tema manual dari Setting (menimpa preferensi sistem selama sesi ini) */
       :root[data-theme="dark"]{color-scheme:dark;--bg:#081A30;--surface:#0F2A4A;--surface2:#16365E;--ink:#EFF7FF;--ink2:#9FC3E8;--line:#1E4A73;--accent:#38BDF8;--accent2:#FF8A70;--accent3:#FFD166;--accent-ink:#06223D;--accent-soft:#123B63;--red:#FF8A85;--red-soft:#4A2328;--amber:#FFD166;--amber-soft:#4A3A12;--ok:#4ADE80;--ok-soft:#143B2A;--bad:#FF8A85;--bad-soft:#4A2328;--shadow:0 2px 6px rgba(0,0,0,.3),0 16px 36px rgba(0,0,0,.35);--shadow-sm:0 4px 14px rgba(0,0,0,.3)}
       :root[data-theme="light"]{color-scheme:light;--bg:#EFF7FF;--surface:#ffffff;--surface2:#E3F2FF;--ink:#0B2447;--ink2:#4A6B8C;--line:#C9E6FF;--accent:#0369A1;--accent2:#FF6B4A;--accent3:#FFC531;--accent-ink:#ffffff;--accent-soft:#D9F0FF;--red:#B42318;--red-soft:#FFE4E2;--amber:#B54708;--amber-soft:#FFF3C4;--ok:#067647;--ok-soft:#D3F8E3;--bad:#B42318;--bad-soft:#FFE4E2;--shadow:0 2px 6px rgba(0,145,234,.07),0 16px 36px rgba(0,110,200,.09);--shadow-sm:0 4px 14px rgba(0,110,200,.10)}
@@ -704,6 +724,8 @@
           </div>
           <div class="drill-panel" data-panel="belajar" hidden>
             <button class="tabbtn" type="button" data-tab="grammar">Grammar</button>
+            <button class="tabbtn" type="button" data-tab="tenses">Tenses</button>
+            <button class="tabbtn" type="button" data-tab="topik">Topik Belajar</button>
             <button class="tabbtn" type="button" data-tab="kosakata">Kosakata</button>
             <button class="tabbtn" type="button" data-tab="tips">Tips &amp; Trik</button>
           </div>
@@ -2913,6 +2935,300 @@
           <div class="quiz-result" data-result="gF"></div>
         </div>
 
+      </section>
+
+      <!-- ============ TAB: TENSES ============ -->
+      <section class="tabpane" id="pane-tenses">
+        <div class="card">
+          <h2>Tenses — peta lengkap untuk pelajar Indonesia</h2>
+          <p class="sub">Bahasa Indonesia tidak mengubah kata kerja menurut waktu — “makan” tetap “makan” kemarin, hari ini, atau besok; waktu cukup ditandai kata keterangan (<i>kemarin, sudah, sedang, besok</i>). Bahasa Inggris justru menaruh waktu <b>di kata kerjanya</b>. Karena itu tenses adalah sumber kesalahan nomor satu pelajar Indonesia — dan kabar baiknya, polanya sangat teratur: 3 poros waktu (past – present – future) × 4 aspek (simple – continuous – perfect – perfect continuous) = 12 tenses di halaman ini.</p>
+          <h3>Cara memilih tense dalam 10 detik</h3>
+          <ul>
+            <li><b>Langkah 1 — kapan?</b> Lihat penanda waktunya (signal words) dulu: <i>yesterday / last week / ago</i> → keluarga Past; <i>every day / usually</i> → Simple Present; <i>tomorrow / next week</i> → keluarga Future; <i>now / right now / Look! / Listen!</i> → Continuous; <i>since / for / already / just</i> → keluarga Perfect.</li>
+            <li><b>Langkah 2 — selesai atau belum?</b> Kejadian lampau yang waktunya jelas &amp; selesai → Simple Past. Kejadian lampau yang hasilnya masih terasa sekarang / waktunya tidak spesifik → Present Perfect. Ini pembeda yang paling sering menjebak: ada kata waktu lampau spesifik (<i>yesterday, last night, in 2020</i>) = <b>haram</b> pakai Present Perfect.</li>
+            <li><b>Langkah 3 — sedang berlangsung?</b> Aksi yang sedang berjalan pada titik waktu tertentu → tambah <i>be + V-ing</i> (Continuous). Aksi yang sudah berlangsung <i>sejak</i> titik lampau sampai titik acuan → Perfect Continuous.</li>
+            <li><b>Patokan timeline:</b> bayangkan garis waktu — Past ← Sekarang → Future. Perfect selalu “mundur selangkah”: Present Perfect = lampau yang menempel ke sekarang; Past Perfect = lampau dari lampau (yang lebih dulu dari dua kejadian lampau); Future Perfect = “sudah selesai sebelum titik masa depan”.</li>
+          </ul>
+          <div class="note"><p><b>Jebakan klasik pelajar Indonesia:</b> ✗ <i>I go to campus yesterday</i> → ✓ <i>I <b>went</b> to campus yesterday</i> (ada “yesterday”, kata kerja wajib berubah). ✗ <i>I have met him last week</i> → ✓ <i>I <b>met</b> him last week</i>. ✗ <i>She is go to school</i> → ✓ <i>She <b>goes</b> to school</i> (<i>is</i> hanya dipakai sebelum V-ing / kata sifat / kata benda, bukan sebelum V1). ✗ <i>I am agree</i> → ✓ <i>I <b>agree</b></i> (<i>agree</i> sudah kata kerja). Pola umumnya: otak Indonesia menambal dengan <i>be</i> atau membiarkan V1 — dua-duanya ditandai e-rater.</p></div>
+        </div>
+
+        <div class="card">
+          <h2>1 · Simple Present</h2>
+          <div class="t-rumus">S + V1 (he/she/it + V1 + s/es) · negatif: S + do/does + not + V1 · tanya: Do/Does + S + V1?</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Kebiasaan &amp; rutinitas.</li><li>Fakta umum / kebenaran ilmiah.</li><li>Jadwal tetap (kereta, kelas, jam buka).</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">She <b>teaches</b> English every weekday.<span class="id">Dia mengajar Bahasa Inggris setiap hari kerja.</span></p>
+            <p class="t-ex" lang="en">Water <b>boils</b> at 100 degrees Celsius.<span class="id">Air mendidih pada suhu 100 derajat Celsius.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">every day/week</span><span class="chip">always</span><span class="chip">usually</span><span class="chip">often</span><span class="chip">never</span><span class="chip">on Mondays</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>He go to work by bus</i> → ✓ <i>He <b>goes</b></i> — subjek he/she/it wajib +s/es. Ini agreement paling dasar dan paling sering hilang karena Bahasa Indonesia tidak punya.</li><li>✗ <i>She doesn’t goes</i> → ✓ <i>She doesn’t <b>go</b></i> — setelah do/does, kata kerja kembali ke V1 polos.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>2 · Present Continuous</h2>
+          <div class="t-rumus">S + am/is/are + V-ing · negatif: S + am/is/are + not + V-ing · tanya: Am/Is/Are + S + V-ing?</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Sedang terjadi saat ini juga.</li><li>Situasi sementara (minggu ini, semester ini).</li><li>Rencana dekat yang sudah pasti (dengan penanda waktu depan).</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">Look! The students <b>are discussing</b> the article now.<span class="id">Lihat! Para mahasiswa sedang mendiskusikan artikel itu sekarang.</span></p>
+            <p class="t-ex" lang="en">I <b>am staying</b> at my aunt’s house this week.<span class="id">Saya sedang tinggal di rumah bibi saya minggu ini.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">now</span><span class="chip">right now</span><span class="chip">at the moment</span><span class="chip">Look!</span><span class="chip">Listen!</span><span class="chip">today / this week</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>I am study now</i> → ✓ <i>I am <b>studying</b> now</i> — <i>am/is/are</i> selalu diikuti V-ing, bukan V1.</li><li>Kata kerja keadaan (<i>know, want, believe, like</i>) umumnya tidak di-continuous-kan: ✗ <i>I am knowing</i> → ✓ <i>I <b>know</b></i>.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>3 · Present Perfect</h2>
+          <div class="t-rumus">S + have/has + V3 · negatif: S + have/has + not + V3 · tanya: Have/Has + S + V3?</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Kejadian lampau yang hasilnya masih relevan sekarang.</li><li>Pengalaman hidup (tanpa menyebut kapan).</li><li>Aksi yang baru saja selesai, atau berlangsung sejak titik lampau sampai sekarang (dengan <i>since/for</i>).</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">I <b>have finished</b> my essay.<span class="id">Saya sudah menyelesaikan esai saya. (hasilnya: esainya selesai sekarang)</span></p>
+            <p class="t-ex" lang="en">She <b>has lived</b> in Batam since 2019.<span class="id">Dia sudah tinggal di Batam sejak 2019. (dan masih tinggal)</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">already</span><span class="chip">just</span><span class="chip">yet</span><span class="chip">ever / never</span><span class="chip">since + titik waktu</span><span class="chip">for + durasi</span><span class="chip">recently</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>I have met him last week</i> → ✓ <i>I <b>met</b> him last week</i> — penanda waktu lampau spesifik mematikan Present Perfect; pakai Simple Past.</li><li>Bedakan <i>since</i> (titik awal: <i>since 2020</i>) vs <i>for</i> (durasi: <i>for three years</i>) — tertukar terus di Writing.</li><li>“Sudah” dalam Bahasa Indonesia tidak selalu Present Perfect: “Saya sudah makan kemarin” tetap Simple Past karena ada “kemarin”.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>4 · Present Perfect Continuous</h2>
+          <div class="t-rumus">S + have/has + been + V-ing</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Aksi yang mulai di lampau, masih berlangsung sampai sekarang — menekankan <b>durasi/prosesnya</b>.</li><li>Aksi yang baru berhenti tapi bekasnya masih terlihat (mata merah, baju basah).</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">They <b>have been studying</b> for three hours.<span class="id">Mereka sudah belajar selama tiga jam. (dan masih belajar)</span></p>
+            <p class="t-ex" lang="en">It <b>has been raining</b> since morning.<span class="id">Hujan turun terus sejak pagi.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">for + durasi</span><span class="chip">since</span><span class="chip">all day / all week</span><span class="chip">lately</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>I am learning English since 2021</i> → ✓ <i>I <b>have been learning</b> English since 2021</i> — ada <i>since</i>, wajib keluarga Perfect, bukan Continuous biasa.</li><li>Kalau menekankan hasil/jumlah (berapa soal, berapa halaman), pakai Present Perfect biasa: <i>I have done 20 questions</i>, bukan continuous.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>5 · Simple Past</h2>
+          <div class="t-rumus">S + V2 · negatif: S + did + not + V1 · tanya: Did + S + V1?</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Kejadian lampau yang selesai, dengan waktu yang jelas (disebut atau tersirat).</li><li>Urutan kejadian dalam cerita / laporan.</li><li>Kebiasaan lampau yang sudah berhenti.</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">We <b>visited</b> the museum two days ago.<span class="id">Kami mengunjungi museum itu dua hari yang lalu.</span></p>
+            <p class="t-ex" lang="en">He <b>did not come</b> to class yesterday.<span class="id">Dia tidak datang ke kelas kemarin.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">yesterday</span><span class="chip">last night/week/year</span><span class="chip">… ago</span><span class="chip">in 2020</span><span class="chip">this morning (sudah lewat)</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>I go yesterday</i> → ✓ <i>I <b>went</b> yesterday</i> — jebakan nomor satu: jangan biarkan kata keterangan waktu bekerja sendirian; kata kerjanya ikut berubah.</li><li>✗ <i>Did you went?</i> → ✓ <i>Did you <b>go</b>?</i> — setelah <i>did</i>, selalu V1.</li><li>Hafalkan V2/V3 kata kerja tak beraturan yang paling sering muncul di TOEFL: <i>go–went–gone, take–took–taken, write–wrote–written, speak–spoke–spoken, begin–began–begun, grow–grew–grown</i>.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>6 · Past Continuous</h2>
+          <div class="t-rumus">S + was/were + V-ing</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Aksi yang sedang berlangsung pada titik waktu lampau tertentu.</li><li>Aksi panjang yang disela aksi pendek (Simple Past): pola “was/were + V-ing … when + V2”.</li><li>Dua aksi lampau yang berjalan bersamaan (<i>while</i>).</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">At 9 p.m. last night, we <b>were still working</b>.<span class="id">Jam 9 malam tadi malam, kami masih bekerja.</span></p>
+            <p class="t-ex" lang="en">I <b>was reading</b> when the phone rang.<span class="id">Saya sedang membaca ketika telepon berdering.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">when</span><span class="chip">while</span><span class="chip">as</span><span class="chip">at this time yesterday</span><span class="chip">all night / all morning</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>I was go home</i> → ✓ <i>I was <b>going</b> home</i> — <i>was/were</i> pasangannya V-ing.</li><li>Trik cepat: aksi <b>panjang = continuous</b>, aksi <b>penyela = simple past</b>. “While I was cooking, he arrived.”</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>7 · Past Perfect</h2>
+          <div class="t-rumus">S + had + V3</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Dari dua kejadian lampau, yang terjadi <b>lebih dulu</b>.</li><li>Menjelaskan sebab/keadaan sebelum kejadian lampau lain.</li><li>Kalimat pengandaian tipe 3 &amp; reported speech (pelengkap lanjut).</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">The train <b>had left</b> before we arrived at the station.<span class="id">Kereta sudah berangkat sebelum kami tiba di stasiun.</span></p>
+            <p class="t-ex" lang="en">She failed the quiz because she <b>had not studied</b>.<span class="id">Dia gagal kuis karena dia belum belajar (sebelumnya).</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">before</span><span class="chip">after</span><span class="chip">by the time</span><span class="chip">already (konteks lampau)</span><span class="chip">when (dua kejadian lampau)</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>When I arrived, he left</i> (seolah bersamaan) → ✓ <i>When I arrived, he <b>had left</b></i> bila maksudnya dia sudah pergi duluan. Urutan kejadian adalah nyawa Past Perfect.</li><li>Jangan pakai Past Perfect untuk satu kejadian lampau tunggal tanpa pembanding — cukup Simple Past.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>8 · Past Perfect Continuous</h2>
+          <div class="t-rumus">S + had + been + V-ing</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Aksi yang sudah berlangsung selama durasi tertentu <b>sebelum</b> titik/kejadian lampau lain — menekankan prosesnya.</li><li>Menjelaskan sebab kelelahan/keadaan di masa lampau.</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">They <b>had been waiting</b> for an hour when the bus finally came.<span class="id">Mereka sudah menunggu selama satu jam ketika bus akhirnya datang.</span></p>
+            <p class="t-ex" lang="en">Her eyes were red because she <b>had been crying</b>.<span class="id">Matanya merah karena dia habis menangis (sebelum itu).</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">for + durasi</span><span class="chip">since</span><span class="chip">before (konteks lampau)</span><span class="chip">how long</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>Bedakan dari Past Perfect: continuous menekankan <b>proses/durasi</b> (<i>had been waiting</i>), simple menekankan <b>hasil selesai</b> (<i>had finished</i>).</li><li>Tenses ini jarang muncul di TOEFL — kenali polanya, jangan habiskan waktu menghafal di luar konteks.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>9 · Simple Future</h2>
+          <div class="t-rumus">S + will + V1 · rencana pasti: S + am/is/are + going to + V1 · negatif: S + will + not (won’t) + V1</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Keputusan spontan saat bicara, janji, tawaran, prediksi (<i>will</i>).</li><li>Rencana yang sudah diputuskan &amp; prediksi berbasis bukti (<i>be going to</i>).</li><li>Jadwal resmi kadang memakai Simple Present: <i>The class starts at 8 tomorrow</i>.</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">I <b>will help</b> you with the report.<span class="id">Saya akan membantumu dengan laporan itu. (janji spontan)</span></p>
+            <p class="t-ex" lang="en">We <b>are going to present</b> our findings next week.<span class="id">Kami akan mempresentasikan temuan kami minggu depan. (rencana)</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">tomorrow</span><span class="chip">next week/month/year</span><span class="chip">soon</span><span class="chip">in the future</span><span class="chip">I think / I promise</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>✗ <i>I will to go</i> → ✓ <i>I will <b>go</b></i> — setelah <i>will</i> langsung V1, tanpa <i>to</i>.</li><li>✗ <i>Tomorrow I go…</i> untuk rencana pribadi terasa janggal — pakai <i>will / going to / Present Continuous</i> (<i>I am leaving tomorrow</i>).</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>10 · Future Continuous</h2>
+          <div class="t-rumus">S + will + be + V-ing</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Aksi yang akan sedang berlangsung pada titik waktu masa depan tertentu.</li><li>Menanyakan rencana orang lain dengan sopan (<i>Will you be using…?</i>).</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">At this time tomorrow, I <b>will be flying</b> to Jakarta.<span class="id">Besok jam segini, saya sedang terbang ke Jakarta.</span></p>
+            <p class="t-ex" lang="en">Don’t call at 7 — we <b>will be having</b> dinner.<span class="id">Jangan telepon jam 7 — kami sedang makan malam.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">at this time tomorrow</span><span class="chip">at + jam + tomorrow/tonight</span><span class="chip">all day tomorrow</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>Kuncinya frasa “at this time / at + jam” di masa depan → hampir pasti Future Continuous.</li><li>Jangan tertukar dengan Simple Future: <i>will fly</i> = kejadiannya; <i>will be flying</i> = sedang di tengah-tengahnya pada jam itu.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>11 · Future Perfect</h2>
+          <div class="t-rumus">S + will + have + V3</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Aksi yang <b>sudah akan selesai sebelum</b> titik waktu masa depan tertentu.</li><li>Sering dengan <i>by + waktu depan</i>: by tomorrow, by 2030, by the time you arrive.</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">By next June, she <b>will have graduated</b>.<span class="id">Menjelang Juni tahun depan, dia sudah akan lulus.</span></p>
+            <p class="t-ex" lang="en">I <b>will have finished</b> the assignment by Friday.<span class="id">Saya sudah akan menyelesaikan tugas itu sebelum Jumat.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">by + waktu depan</span><span class="chip">by the time</span><span class="chip">before + waktu depan</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>Melihat <i>by + waktu masa depan</i> → langsung kandidat Future Perfect; melihat <i>by + waktu lampau</i> → Past Perfect (<i>had + V3</i>). Satu kata <i>by</i>, dua arah.</li><li>✗ <i>will have finish</i> → ✓ <i>will have <b>finished</b></i> — setelah <i>have</i> selalu V3.</li></ul></div>
+        </div>
+
+        <div class="card">
+          <h2>12 · Future Perfect Continuous</h2>
+          <div class="t-rumus">S + will + have + been + V-ing</div>
+          <div class="t-sec"><h4>Kapan dipakai</h4><ul><li>Menekankan <b>durasi</b> aksi yang sudah berjalan hingga titik masa depan tertentu.</li><li>Biasanya bersama <i>for + durasi</i> dan titik acuan masa depan.</li></ul></div>
+          <div class="t-sec"><h4>Contoh</h4>
+            <p class="t-ex" lang="en">By December, I <b>will have been working</b> here for five years.<span class="id">Menjelang Desember, saya sudah akan bekerja di sini selama lima tahun.</span></p>
+            <p class="t-ex" lang="en">By the time he retires, he <b>will have been teaching</b> for 30 years.<span class="id">Saat dia pensiun nanti, dia sudah akan mengajar selama 30 tahun.</span></p>
+          </div>
+          <div class="t-sec"><h4>Signal words</h4><p><span class="chip">by + waktu depan</span><span class="chip">for + durasi</span><span class="chip">by the time</span></p></div>
+          <div class="t-sec"><h4>Kesalahan umum + tips</h4><ul><li>Tenses terpanjang rumusnya — bongkar dari belakang: <i>will</i> (future) + <i>have been</i> (perfect) + <i>V-ing</i> (continuous). Membaca mundur seperti ini menenangkan saat tes.</li><li>Sangat jarang di TOEFL; cukup kenali, fokus energi ke 8 tenses pertama yang jauh lebih sering dinilai e-rater.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- ============ TAB: TOPIK BELAJAR ============ -->
+      <section class="tabpane" id="pane-topik">
+        <div class="card">
+          <h2>Topik Belajar — semua jurus, satu tempat</h2>
+          <p class="sub">Daftar topik yang bisa kamu pelajari di LatihTOEFL, dikelompokkan per keterampilan. Klik topik untuk membukanya: isinya penjelasan singkat plus <b>tips, trik, dan hacks</b> yang langsung bisa dipakai — bukan teori panjang. Kerjakan dari kategori terlemahmu (lihat Dashboard), bukan dari atas.</p>
+        </div>
+
+        <div class="card">
+          <h2>Grammar</h2>
+          <details class="topik-item"><summary>Tenses — memilih bentuk waktu yang benar</summary>
+            <p>12 tenses = 3 poros waktu × 4 aspek. Bahasa Indonesia menandai waktu dengan kata keterangan; Inggris menaruhnya di kata kerja — itu akar hampir semua kesalahan tense.</p>
+            <ul><li><b>Tips:</b> baca signal words dulu sebelum memilih: <i>yesterday/ago</i> → Past, <i>since/for</i> → Perfect, <i>now/Look!</i> → Continuous.</li><li><b>Trik:</b> ada penanda waktu lampau spesifik (<i>last week, in 2020</i>) → Present Perfect gugur seketika; pakai Simple Past.</li><li><b>Hack:</b> bongkar rumus panjang dari belakang — <i>will + have + been + V-ing</i> = future + perfect + continuous.</li></ul>
+            <p><button class="btn small tabbtn" type="button" data-tab="tenses">Buka halaman Tenses lengkap</button></p>
+          </details>
+          <details class="topik-item"><summary>Articles — a / an / the / tanpa artikel</summary>
+            <p>Bahasa Indonesia tidak punya artikel, jadi ini kategori “omission” terbesar pelajar Indonesia. Patokannya: benda spesifik yang sama-sama diketahui → <i>the</i>; benda tunggal countable yang baru disebut → <i>a/an</i>; konsep umum &amp; uncountable → tanpa artikel.</p>
+            <ul><li><b>Tips:</b> <i>a</i> vs <i>an</i> ditentukan <b>bunyi</b>, bukan huruf: <i>an hour</i> (h bisu), <i>a university</i> (bunyi “yu”).</li><li><b>Trik:</b> uncountable (<i>information, advice, furniture, homework</i>) tidak pernah memakai <i>a</i> dan tidak dijamakkan — perlu satuan? pakai <i>a piece of …</i></li><li><b>Hack:</b> sebut pertama = <i>a</i>, sebut kedua = <i>the</i>. “I saw <i>a</i> dog. <i>The</i> dog was huge.”</li></ul>
+          </details>
+          <details class="topik-item"><summary>Preposisi — kolokasi, bukan terjemahan</summary>
+            <p>Preposisi Inggris tidak diterjemahkan kata per kata dari “di/ke/dari” — mereka menempel sebagai kolokasi pada kata kerja/kata sifatnya.</p>
+            <ul><li><b>Tips:</b> hafalkan pasangan tetap: <i>good at, interested in, depend on, differ from, afraid of, responsible for</i>.</li><li><b>Trik:</b> <i>discuss, enter, reach, marry</i> langsung diikuti objek — tanpa <i>about/in</i>: ✗ <i>discuss about</i> → ✓ <i>discuss</i>.</li><li><b>Hack:</b> waktu: <i>at</i> jam, <i>on</i> hari/tanggal, <i>in</i> bulan/tahun — “makin spesifik, makin kecil preposisinya”.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Subject–verb agreement</summary>
+            <p>Kata kerja berubah mengikuti subjek — konsep yang tidak ada di Bahasa Indonesia. Fokusnya: subjek orang ketiga tunggal (he/she/it) di Simple Present wajib +s/es.</p>
+            <ul><li><b>Tips:</b> cari subjek aslinya, abaikan frasa sisipan: <i>The list of items <b>is</b>…</i> (subjeknya <i>list</i>, bukan <i>items</i>).</li><li><b>Trik:</b> subjek tak terhitung &amp; gerund dianggap tunggal: <i>Swimming <b>is</b> fun; The information <b>was</b> useful</i>.</li><li><b>Hack:</b> setelah <i>does/doesn’t</i>, kata kerja kembali polos: <i>She doesn’t <b>go</b></i> — huruf -s sudah “dipakai” oleh <i>does</i>.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Plural &amp; akhiran -s</summary>
+            <p>Jamak dalam Bahasa Indonesia ditandai pengulangan/konteks; dalam Inggris wajib -s/-es pada kata bendanya — dan -s yang sama juga menandai agreement, jadi satu huruf ini dinilai dua kali.</p>
+            <ul><li><b>Tips:</b> setelah angka &gt; 1 selalu jamak: <i>two <b>pens</b>, three <b>days</b></i>.</li><li><b>Trik:</b> <i>many</i> hanya untuk countable; uncountable pasangannya <i>much</i>: <i>much information</i>, bukan <i>many informations</i>.</li><li><b>Hack:</b> daftar “tidak bisa jamak” ditempel di meja belajar: <i>information, advice, equipment, furniture, knowledge, homework, research</i>.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Word order — susunan kata</summary>
+            <p>Pola dasar Inggris kaku: Subjek–Verb–Objek, dan kata sifat selalu <b>sebelum</b> kata benda — kebalikan dari Indonesia (“rumah besar” → <i>big house</i>).</p>
+            <ul><li><b>Tips:</b> urutan kata sifat: opini–ukuran–usia–bentuk–warna–asal–bahan (<i>a beautiful big old house</i>).</li><li><b>Trik:</b> keterangan frekuensi (<i>always, usually, never</i>) duduk sebelum kata kerja utama, sesudah <i>be</i>: <i>She <b>always</b> arrives early; She is <b>always</b> early</i>.</li><li><b>Hack:</b> dalam kalimat tanya, jangan susun seperti pernyataan: ✗ <i>Where you are going?</i> → ✓ <i>Where <b>are you</b> going?</i></li></ul>
+          </details>
+        </div>
+
+        <div class="card">
+          <h2>Reading</h2>
+          <details class="topik-item"><summary>Skimming &amp; scanning</summary>
+            <p>Reading TOEFL 2026 memberi ±36 detik per soal — membaca kata per kata pasti kehabisan waktu. Skimming = menangkap struktur &amp; gagasan utama; scanning = berburu detail spesifik (nama, angka, tanggal).</p>
+            <ul><li><b>Tips:</b> baca kalimat pertama tiap paragraf + kata transisi (<i>however, therefore, in contrast</i>) untuk peta teks.</li><li><b>Trik:</b> kerjakan soal detail (scanning) sebelum soal gagasan utama — detail menempel di satu lokasi, gagasan utama lebih mudah setelahnya.</li><li><b>Hack:</b> soal “Complete the Words”: tebak kelas kata yang hilang dari struktur kalimat dulu, baru cocokkan huruf — menebak buta dari huruf saja membuang detik.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Inference — menyimpulkan tanpa mengarang</summary>
+            <p>Jawaban inferensi yang benar selalu <b>satu langkah logis kecil</b> dari teks — didukung, bukan sekadar masuk akal.</p>
+            <ul><li><b>Tips:</b> eliminasi pilihan yang “benar di dunia nyata” tapi tidak disebut teks — itu jebakan paling umum.</li><li><b>Trik:</b> pilihan dengan kata mutlak (<i>always, never, completely</i>) jarang benar untuk inferensi.</li><li><b>Hack:</b> tanyakan “kalimat mana di teks yang membuktikan ini?” — kalau tidak ketemu, coret.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Kosakata dari konteks</summary>
+            <p>Soal kosakata tidak menuntut hafalan kamus — kata target bisa ditebak dari kalimat di sekitarnya.</p>
+            <ul><li><b>Tips:</b> tutupi kata target, tebak kebutuhan kalimatnya dengan kata-katamu sendiri, lalu substitusi tiap pilihan satu per satu.</li><li><b>Trik:</b> cari kata penanda: <i>because, so, but, in other words</i> — definisi sering disembunyikan setelah koma atau tanda hubung.</li><li><b>Hack:</b> awalan/akhiran menolong: <i>un-, re-, -less, -tion</i> memberi arah makna dalam 2 detik.</li></ul>
+            <p><button class="btn small tabbtn" type="button" data-tab="reading">Latihan di tab Reading</button></p>
+          </details>
+        </div>
+
+        <div class="card">
+          <h2>Listening</h2>
+          <details class="topik-item"><summary>Note-taking yang berguna</summary>
+            <p>Catatan yang baik bukan transkrip — hanya kata kunci, panah sebab-akibat, dan angka/nama yang tidak bisa ditebak ulang.</p>
+            <ul><li><b>Tips:</b> tulis singkatanmu sendiri: <i>↑ increase, ↓ decrease, → causes, ≠ different, b/c because</i>.</li><li><b>Trik:</b> bagi kertas jadi dua kolom untuk Conversation: pembicara 1 vs pembicara 2 — soal sering menanyakan siapa berkata apa.</li><li><b>Hack:</b> saat audio berpindah topik (ada jeda/penanda), beri garis pemisah — struktur catatanmu akan meniru struktur soalnya.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Signal words dalam audio</summary>
+            <p>Pembicara TOEFL menandai struktur dengan kata penanda — dengarkan mereka, bukan hanya isinya.</p>
+            <ul><li><b>Tips:</b> <i>however / but actually</i> = koreksi — jawaban hampir selalu di kalimat sesudahnya.</li><li><b>Trik:</b> <i>first, next, finally</i> menandai urutan; soal “what happens next” bersembunyi di sana.</li><li><b>Hack:</b> dengar penekanan suara (stress): kata yang diucapkan lebih keras/pelan-pelan biasanya kata yang ditanyakan.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Membiasakan aksen</summary>
+            <p>Audio TOEFL memakai aksen Amerika Utara dan variasi internasional. Telinga terbiasa lebih penting daripada “bakat”.</p>
+            <ul><li><b>Tips:</b> latih 10–15 menit sehari dengan audio yang ada transkripnya: dengar → baca → dengar lagi.</li><li><b>Trik:</b> perhatikan penghubung kata (linking): <i>“an apple”</i> terdengar “a-napple” — kebingungan Listening sering dari sini, bukan kosakata.</li><li><b>Hack:</b> putar ulang set Listen &amp; Repeat yang sama 3 hari berturut-turut; kecepatan pahammu naik tanpa terasa.</li></ul>
+            <p><button class="btn small tabbtn" type="button" data-tab="listening">Latihan di tab Listening</button></p>
+          </details>
+        </div>
+
+        <div class="card">
+          <h2>Writing</h2>
+          <details class="topik-item"><summary>Template email (Write an Email)</summary>
+            <p>Email TOEFL dinilai dari kelengkapan tugas + kesopanan register, bukan kreativitas. Struktur aman: salam → tujuan (1 kalimat) → isi per poin tugas → penutup sopan → tanda tangan nama.</p>
+            <ul><li><b>Tips:</b> jawab <b>semua</b> poin di prompt — satu poin hilang, band jatuh, seindah apa pun bahasanya.</li><li><b>Trik:</b> satu paragraf per poin tugas; pemeriksa manusia &amp; e-rater sama-sama suka struktur yang terlihat.</li><li><b>Hack:</b> siapkan frasa sopan serbaguna: <i>I am writing to…, I would appreciate it if…, Please let me know…</i></li></ul>
+          </details>
+          <details class="topik-item"><summary>Struktur Academic Discussion</summary>
+            <p>Tugasnya menanggapi pertanyaan profesor + dua pendapat mahasiswa. Nilai datang dari posisi yang jelas + alasan + contoh, dan menanggapi (bukan mengabaikan) pendapat teman.</p>
+            <ul><li><b>Tips:</b> kalimat pertama = posisimu, tanpa basa-basi: <i>I agree with Claire that…</i></li><li><b>Trik:</b> sebut satu nama mahasiswa dan bangun/tolak argumennya — rubriknya memang memberi poin untuk keterlibatan (engagement).</li><li><b>Hack:</b> kerangka 4 langkah: posisi → alasan 1 → contoh konkret → tanggapi teman. ±120 kata rapi mengalahkan 200 kata berputar.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Hacks e-rater</summary>
+            <p>E-rater menandai pola mekanis: agreement, artikel, tense, ejaan, dan variasi kalimat. Ia tidak paham argumenmu — jadi kebersihan permukaan itu nyata nilainya.</p>
+            <ul><li><b>Tips:</b> sisakan 1–2 menit khusus memeriksa -s agreement dan artikel; dua kategori itu separuh kesalahan pelajar Indonesia.</li><li><b>Trik:</b> variasikan pembuka kalimat (jangan semua “I think…”) — variasi struktur terbaca sebagai kematangan bahasa.</li><li><b>Hack:</b> kalimat pendek yang benar &gt; kalimat panjang yang ambisius tapi runtuh di tengah. Naikkan kompleksitas hanya kalau strukturnya kamu kuasai.</li></ul>
+            <p><button class="btn small tabbtn" type="button" data-tab="writing">Latihan di tab Writing</button></p>
+          </details>
+        </div>
+
+        <div class="card">
+          <h2>Speaking</h2>
+          <details class="topik-item"><summary>Teknik Listen &amp; Repeat</summary>
+            <p>Tugasnya menirukan kalimat model persis — dinilai dari kecocokan kata &amp; kelancaran tiruan, bukan pendapatmu.</p>
+            <ul><li><b>Tips:</b> dengarkan irama &amp; potongan frasa (chunking), bukan kata lepas: ulangi per kelompok makna.</li><li><b>Trik:</b> kata yang hilang ujungnya (-s, -ed) adalah penalti termurah untuk dihindari — ucapkan akhir kata dengan sadar.</li><li><b>Hack:</b> kalau lupa satu kata, <b>terus jalan</b> — berhenti total menghukum lebih banyak kata daripada satu kata hilang.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Trik Take an Interview</summary>
+            <p>Jawaban dinilai dari kelancaran, kejelasan, dan pengembangan ide. Struktur kilat: jawab langsung → alasan → contoh kecil → tutup.</p>
+            <ul><li><b>Tips:</b> beli waktu dengan frasa penahan yang natural: <i>That’s an interesting question; in my experience…</i></li><li><b>Trik:</b> contoh pribadi konkret (nama tempat, waktu) membuat jawaban terdengar berkembang — penilai menghargai detail.</li><li><b>Hack:</b> rekam latihanmu dan dengarkan sekali saja, fokus ke dua hal: jeda “eee” dan kata yang tertelan. Perbaiki satu per sesi.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Pelafalan /θ, ð, v/</summary>
+            <p>Tiga bunyi ini tidak ada di Bahasa Indonesia: /θ/ (<i>think</i>) terbaca “tink”, /ð/ (<i>this</i>) terbaca “dis”, /v/ (<i>very</i>) terbaca “ferry”. Interferensi fonologis ini yang paling cepat menandai aksen.</p>
+            <ul><li><b>Tips:</b> /θ/ &amp; /ð/: ujung lidah menyentuh gigi atas, hembuskan udara — <i>think</i> tanpa getar, <i>this</i> dengan getar tenggorokan.</li><li><b>Trik:</b> /v/: gigi atas menyentuh bibir bawah lalu bergetar — beda total dari /f/ yang hanya hembusan.</li><li><b>Hack:</b> latih pasangan minimal 2 menit sehari: <i>think–sink, three–tree, very–ferry, vest–best</i>. Rekam dan bandingkan.</li></ul>
+            <p><button class="btn small tabbtn" type="button" data-tab="speaking">Latihan di tab Speaking</button></p>
+          </details>
+        </div>
+
+        <div class="card">
+          <h2>Kosakata</h2>
+          <details class="topik-item"><summary>Hacks AWL (Academic Word List)</summary>
+            <p>570 keluarga kata AWL muncul di teks akademik semua bidang — investasi kosakata dengan panen terbesar untuk Complete the Words dan Reading.</p>
+            <ul><li><b>Tips:</b> pelajari kata <b>dalam kalimat</b>, plus satu bentuk turunannya: <i>analyse – analysis – analytical</i> dihitung satu keluarga.</li><li><b>Trik:</b> prioritaskan Sublist 1–3 dulu (paling sering muncul), jangan alfabetis dari A.</li><li><b>Hack:</b> buat kalimat contoh dari hidupmu sendiri — memori menempel 3× lebih kuat daripada contoh buku.</li></ul>
+          </details>
+          <details class="topik-item"><summary>SRS — spaced repetition</summary>
+            <p>Otak melupakan kurva eksponensial; SRS melawan dengan mengulang tepat sebelum lupa: 1 hari → 3 hari → 1 minggu → 2 minggu → 1 bulan.</p>
+            <ul><li><b>Tips:</b> sesi kecil harian (10 kartu) mengalahkan sesi besar mingguan — konsistensi adalah mekanismenya.</li><li><b>Trik:</b> kartu dua arah: EN→ID untuk membaca, ID→EN untuk menulis &amp; bicara. Arah kedua yang membangun kosakata aktif.</li><li><b>Hack:</b> kata yang salah 3× bukan kartu buruk — tambahkan gambar/kalimat lucu tentang kata itu; yang aneh justru lengket.</li></ul>
+            <p><button class="btn small tabbtn" type="button" data-tab="kosakata">Buka kartu Kosakata</button></p>
+          </details>
+        </div>
+
+        <div class="card">
+          <h2>Strategi Ujian</h2>
+          <details class="topik-item"><summary>Manajemen waktu</summary>
+            <p>Format 2026: ±90 menit total, Reading ±36 detik/soal. Waktu adalah soal tersembunyi di setiap section.</p>
+            <ul><li><b>Tips:</b> pasang batas per soal; soal yang melewati batas ditandai, ditebak, dan ditinggal — kembali kalau sisa waktu.</li><li><b>Trik:</b> dua soal sulit yang kamu paksa selesai = lima soal mudah yang tidak sempat kamu sentuh. Tukar yang rugi.</li><li><b>Hack:</b> latihan selalu dengan timer sejak hari pertama — ritme tes adalah keterampilan, bukan pengetahuan.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Trik tes adaptif</summary>
+            <p>Reading &amp; Listening memakai adaptif dua tahap: performa modul pertama menentukan tingkat kesulitan modul kedua.</p>
+            <ul><li><b>Tips:</b> perlambat di modul pertama (router) — akurasi di sana menaikkan plafon skormu; ngebut di awal adalah kesalahan termahal.</li><li><b>Trik:</b> modul kedua terasa lebih sulit bukan kabar buruk — itu tanda modul pertamamu bagus.</li><li><b>Hack:</b> jangan menebak tingkat kesulitanmu di tengah tes; tugasmu hanya soal di depan mata.</li></ul>
+          </details>
+          <details class="topik-item"><summary>Hacks hari-H</summary>
+            <ul><li><b>Tips:</b> tidur cukup dua malam berturut-turut — defisit tidur tidak ditebus satu malam.</li><li><b>Trik:</b> tiba 30 menit lebih awal; keterlambatan menaikkan detak jantung, dan detak jantung memakan memori kerja.</li><li><b>Hack:</b> pemanasan 5 menit Bahasa Inggris (dengar satu audio pendek) sebelum masuk ruang — otak perlu “pindah bahasa”, jangan biarkan soal pertama yang membayar biaya perpindahan itu.</li></ul>
+            <p><button class="btn small tabbtn" type="button" data-tab="simulasi">Coba Simulasi Ujian</button></p>
+          </details>
+        </div>
       </section>
 
       <!-- ============ TAB: KOSAKATA ============ -->
@@ -6393,6 +6709,13 @@
         var $ = function (s, r) { return (r || document).querySelector(s); };
         var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
         var BATCH = 3;
+        /* Filter "Tampilkan set" (1/2/3 set, default 3 = perilaku bertahap
+           seperti biasa). Bila 1 atau 2 dipilih, hanya sebanyak itu set yang
+           tampil dan tombol "Lihat set lainnya" sembunyi (sudah di batas
+           filter). Pilihan diingat di perangkat ini (localStorage). */
+        var LIMIT_KEY = "lt-setlimit";
+        var setLimit = BATCH;
+        try { var savedLimit = parseInt(localStorage.getItem(LIMIT_KEY), 10); if (savedLimit >= 1 && savedLimit <= 3) setLimit = savedLimit; } catch (e) {}
         var groups = {};
         function classify(card) {
           var h2 = $("h2", card);
@@ -6469,31 +6792,83 @@
             groups[key].cards.forEach(applyBadge);
           });
         }
+        function visibleCount(grp) {
+          if (setLimit < BATCH) return Math.min(setLimit, grp.cards.length);
+          return Math.min(grp.shown, grp.cards.length);
+        }
+        function syncControls(wrap, btn, count, grp, isTop) {
+          if (!wrap) return;
+          var total = grp.cards.length;
+          var remaining = total - visibleCount(grp);
+          var showBtn = remaining > 0 && setLimit >= BATCH;
+          if (!isTop && remaining <= 0 && setLimit >= BATCH) { wrap.style.display = "none"; return; }
+          wrap.style.display = "";
+          if (btn) { btn.style.display = showBtn ? "" : "none"; btn.textContent = "Lihat set lainnya (" + remaining + " set lagi)"; }
+          if (count) count.textContent = "Menampilkan " + visibleCount(grp) + " dari " + total + " set";
+        }
         function applyVisibility() {
           Object.keys(groups).forEach(function (key) {
             var grp = groups[key];
+            var vis = visibleCount(grp);
             grp.cards.forEach(function (entry, i) {
-              entry.card.classList.toggle("set-hidden", i >= grp.shown);
+              entry.card.classList.toggle("set-hidden", i >= vis);
             });
-            if (grp.wrap) {
-              var remaining = grp.cards.length - grp.shown;
-              if (remaining <= 0) { grp.wrap.style.display = "none"; }
-              else {
-                grp.wrap.style.display = "";
-                grp.btn.textContent = "Lihat set lainnya (" + remaining + " set lagi)";
-                grp.count.textContent = "Menampilkan " + Math.min(grp.shown, grp.cards.length) + " dari " + grp.cards.length + " set";
-              }
-            }
+            syncControls(grp.wrap, grp.btn, grp.count, grp, false);
+            syncControls(grp.topWrap, grp.topBtn, grp.topCount, grp, true);
+            (grp.chips || []).forEach(function (chip) {
+              chip.setAttribute("aria-pressed", parseInt(chip.getAttribute("data-limit"), 10) === setLimit ? "true" : "false");
+            });
           });
         }
         $$(".tabpane [data-setcard]").forEach(function (card) {
           var info = classify(card);
           if (!info) return;
-          if (!groups[info.g]) groups[info.g] = { cards: [], shown: BATCH, wrap: null, btn: null, count: null };
+          if (!groups[info.g]) groups[info.g] = { cards: [], shown: BATCH, wrap: null, btn: null, count: null, topWrap: null, topBtn: null, topCount: null, chips: [] };
           groups[info.g].cards.push({ card: card, info: info });
         });
+        function revealMore(grp) {
+          grp.shown += BATCH;
+          applyVisibility();
+          refreshBadges();
+        }
         Object.keys(groups).forEach(function (key) {
           var grp = groups[key];
+          /* Baris kontrol ATAS (duplikat kontrol bawah + filter "Tampilkan
+             set"), disisipkan tepat sebelum kartu set pertama grup ini —
+             supaya ganti set tidak perlu scroll sampai bawah section. */
+          var bar = document.createElement("div");
+          bar.className = "setbar";
+          var filter = document.createElement("span");
+          filter.className = "setfilter";
+          filter.setAttribute("role", "group");
+          filter.setAttribute("aria-label", "Tampilkan set");
+          var flabel = document.createElement("span");
+          flabel.className = "sf-label"; flabel.textContent = "Tampilkan set";
+          filter.appendChild(flabel);
+          [1, 2, 3].forEach(function (n) {
+            var chip = document.createElement("button");
+            chip.type = "button"; chip.className = "sf-chip";
+            chip.setAttribute("data-limit", String(n));
+            chip.setAttribute("aria-pressed", n === setLimit ? "true" : "false");
+            chip.textContent = String(n);
+            chip.addEventListener("click", function () {
+              setLimit = n;
+              try { localStorage.setItem(LIMIT_KEY, String(n)); } catch (e) {}
+              applyVisibility();
+            });
+            filter.appendChild(chip);
+            grp.chips.push(chip);
+          });
+          var topBtn = document.createElement("button");
+          topBtn.type = "button"; topBtn.className = "btn ghost";
+          topBtn.addEventListener("click", function () { revealMore(grp); });
+          var topCount = document.createElement("span");
+          topCount.className = "more-count";
+          bar.appendChild(filter); bar.appendChild(topBtn); bar.appendChild(topCount);
+          var firstCard = grp.cards[0].card;
+          if (firstCard.parentNode) firstCard.parentNode.insertBefore(bar, firstCard);
+          grp.topWrap = bar; grp.topBtn = topBtn; grp.topCount = topCount;
+          /* Kontrol bawah: seperti sebelumnya, hanya bila set melebihi satu batch. */
           if (grp.cards.length <= BATCH) return;
           var wrap = document.createElement("div");
           wrap.className = "more-wrap";
@@ -6505,11 +6880,7 @@
           var last = grp.cards[grp.cards.length - 1].card;
           if (last.parentNode) last.parentNode.insertBefore(wrap, last.nextSibling);
           grp.wrap = wrap; grp.btn = btn; grp.count = count;
-          btn.addEventListener("click", function () {
-            grp.shown += BATCH;
-            applyVisibility();
-            refreshBadges();
-          });
+          btn.addEventListener("click", function () { revealMore(grp); });
         });
         applyVisibility();
         refreshBadges();
@@ -6535,9 +6906,13 @@
         var $ = function (s, r) { return (r || document).querySelector(s); };
         var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
         /* Menu bar ala Kamus Oleokimia: segmented bar selalu terlihat.
-           Klik Latihan/Belajar/Profil membuka drill-down (baris sub-menu di
-           bawah bar); klik item daun pindah halaman dan menutup drill-down.
-           Klik induk yang sama lagi / klik di luar nav / Esc menutupnya. */
+           Klik Latihan/Belajar/Profil dari luar grupnya langsung pindah ke
+           tab pertama grup itu (Latihan → Reading, Belajar → Grammar,
+           Profil → Akun) dan membuka drill-down-nya, supaya halaman selalu
+           berubah tanpa harus klik item daun dulu. Kalau halaman aktif
+           sudah di dalam grup itu, klik induk hanya buka/tutup drill-down.
+           Klik item daun pindah halaman dan menutup drill-down.
+           Klik di luar nav / Esc menutup drill-down. */
         var drillRow = $("#drillRow");
         var segParents = $$(".seg-parent");
         function closeDrill() {
@@ -6556,9 +6931,28 @@
           btn.addEventListener("click", function (e) {
             e.stopPropagation();
             var panel = $('.drill-panel[data-panel="' + btn.getAttribute("data-menu") + '"]');
-            var willOpen = !panel || panel.hidden;
+            if (!panel || !drillRow) return;
+            var activePane = $(".tabpane.active");
+            var activeTab = activePane ? activePane.id.replace(/^pane-/, "") : "";
+            var inGroup = !!panel.querySelector('.tabbtn[data-tab="' + activeTab + '"]');
+            if (!inGroup) {
+              /* Halaman aktif bukan bagian grup ini: langsung mendarat di
+                 tab pertama grup (klik daunnya, supaya semua handler daun
+                 ikut jalan), lalu buka lagi drill-down yang tadi tertutup
+                 oleh handler daun — sub-menu tetap terlihat untuk pindah
+                 ke tab lain di grup yang sama. */
+              var firstBtn = panel.querySelector(".tabbtn[data-tab]");
+              closeDrill();
+              if (firstBtn) firstBtn.click();
+              panel.hidden = false;
+              drillRow.hidden = false;
+              btn.setAttribute("aria-expanded", "true");
+              syncSegHighlight();
+              return;
+            }
+            var willOpen = panel.hidden;
             closeDrill();
-            if (willOpen && panel && drillRow) {
+            if (willOpen) {
               panel.hidden = false;
               drillRow.hidden = false;
               btn.setAttribute("aria-expanded", "true");
